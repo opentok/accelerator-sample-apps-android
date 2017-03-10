@@ -176,7 +176,7 @@ The BasicListener and AdvancedListener interface monitor state changes in the co
 
 ### Multiparty UI
 
-The UI for the multiparty audio/video communication is represented by an Android GridLayoutManager with RecycleViews. The different layout distributions depend on the number of participants. To adjust the number of columns for the GridLayout, the `setSpanSizeLookup` method has been override. 
+The UI for the multiparty audio/video communication is represented by an Android GridLayoutManager with RecycleViews. The different layout distributions depend on the number of participants. To adjust the number of columns for the GridLayout, the `getSpanSize` method has been override. 
 
 ```java
  private void setupMultipartyLayout() {

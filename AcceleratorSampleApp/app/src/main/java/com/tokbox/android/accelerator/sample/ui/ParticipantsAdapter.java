@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
 import com.tokbox.android.accelerator.sample.R;
 import com.tokbox.android.otsdkwrapper.utils.MediaType;
@@ -18,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ParticipantViewHolder> {
-    private Context context;
-    private List<Participant> mParticipantsList = new ArrayList<Participant>();
+    private List<Participant> mParticipantsList = new ArrayList<>();
 
     public ParticipantsAdapter(Context context, List<Participant> participantsList) throws Exception {
-        this.context = context;
         if (participantsList == null) {
             throw new Exception("ParticipantsList cannot be null");
         }
@@ -43,19 +40,18 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
     @Override
     public void onBindViewHolder(ParticipantViewHolder holder, int position) {
+        Log.i("MARINAS", "VIEW HOLDER");
         Participant participant = mParticipantsList.get(position);
-        holder.container.removeViewAt(holder.container.getChildCount()-1);
+        holder.container.removeAllViews();
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(participant.getContainer().getWidth(), participant.getContainer().getHeight()); // (width, height)
         holder.container.setLayoutParams(params);
 
-        if (!participant.getStatus().has(MediaType.VIDEO) || participant.getStatus().subscribedTo(MediaType.VIDEO)){
-            Log.i("MARINAS", "AUDIO ONLY");
-            holder.container.getChildAt(holder.container.getChildCount()-1).setVisibility(View.GONE);
+        if (!participant.getStatus().has(MediaType.VIDEO) || (participant.getType().equals(Participant.Type.REMOTE) && !participant.getStatus().subscribedTo(MediaType.VIDEO))) {
             holder.audiOnlyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            //holder.audiOnlyView.setVisibility(View.GONE);
+            holder.container.addView(holder.audiOnlyView, params);
+        } else {
+            holder.audiOnlyView.setVisibility(View.GONE);
             if (participant.getStatus().getView() != null) {
                 ViewGroup parent = (ViewGroup) participant.getStatus().getView().getParent();
                 if (parent != null) {
@@ -78,7 +74,6 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
         public ParticipantViewHolder(View view) {
             super(view);
-
             this.audiOnlyView = (RelativeLayout) view.findViewById(R.id.audioOnlyView);
             this.container = (RelativeLayout) view.findViewById(R.id.itemView);
         }

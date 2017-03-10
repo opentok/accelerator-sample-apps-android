@@ -6,32 +6,6 @@
     android:gravity="center_horizontal">
 
     <RelativeLayout
-        android:id="@+id/remoteControls"
-        android:layout_width="@dimen/action_bar_width"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true">
-
-        <ImageButton
-            android:id="@+id/remoteVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:enabled="false"
-            android:src="@drawable/video_icon" />
-
-        <ImageButton
-            android:id="@+id/remoteAudio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/remoteVideo"
-            android:layout_marginTop="25dp"
-            android:background="@null"
-            android:enabled="false"
-            android:src="@drawable/audio" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/audioOnlyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,8 +16,8 @@
 
         <ImageView
             android:id="@+id/avatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="30dp"

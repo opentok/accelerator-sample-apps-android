@@ -147,7 +147,7 @@ public class ActionBarFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.actionbar_fragment, container, false);
 
-        mContainer = (RelativeLayout) this.mActivity.findViewById(R.id.actionbar_preview_fragment_container);
+        mContainer = (RelativeLayout) this.mActivity.findViewById(R.id.actionbar_fragment_container);
         mAudioBtn = (ImageButton) rootView.findViewById(R.id.localAudio);
         mVideoBtn = (ImageButton) rootView.findViewById(R.id.localVideo);
         mCallBtn = (ImageButton) rootView.findViewById(R.id.call);

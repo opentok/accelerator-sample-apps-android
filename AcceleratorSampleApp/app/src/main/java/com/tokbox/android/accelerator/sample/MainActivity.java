@@ -23,26 +23,29 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebSettings;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.opentok.android.OpentokError;
 import com.tokbox.android.accelerator.sample.ui.ActionBarFragment;
+import com.tokbox.android.accelerator.sample.ui.Participant;
+import com.tokbox.android.accelerator.sample.ui.ParticipantsAdapter;
 import com.tokbox.android.accpack.textchat.ChatMessage;
 import com.tokbox.android.accpack.textchat.TextChatFragment;
 import com.tokbox.android.annotations.AnnotationsToolbar;
@@ -67,7 +70,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.PreviewControlCallbacks,
         RemoteControlFragment.RemoteControlCallbacks, PreviewCameraFragment.PreviewCameraCallbacks, AnnotationsView.AnnotationsListener,
@@ -83,12 +89,14 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private RelativeLayout mPreviewViewContainer;
     private RelativeLayout mRemoteViewContainer;
-    private RelativeLayout mRemoteViewContainer2;
-    private RelativeLayout mRemoteViewContainer3;
     private RelativeLayout.LayoutParams mLayoutParamsPreview;
     private RelativeLayout mCameraFragmentContainer;
     private RelativeLayout mActionBarContainer;
-    private GridLayout mRemotesViews;
+    private RecyclerView mParticipantsGrid;
+    private GridLayoutManager mLayoutManager;
+
+    private ParticipantsAdapter mParticipantsAdapter;
+    private List<Participant> mParticipantsList = new ArrayList<Participant>();
 
     private TextView mAlert;
     //audio only views
@@ -146,6 +154,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private String mScreenRemoteId;
     private int mRemotesCount = 0;
 
+    Participant participant;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(LOG_TAG, "onCreate");
@@ -156,14 +167,64 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPreviewViewContainer = (RelativeLayout) findViewById(R.id.publisherview);
-        mRemoteViewContainer = (RelativeLayout) findViewById(R.id.subscriberview);
-        mRemoteViewContainer2 = (RelativeLayout) findViewById(R.id.subscriberview2);
-        mRemoteViewContainer3 =(RelativeLayout) findViewById(R.id.subscriberview3);
+        mParticipantsGrid = (RecyclerView) findViewById(R.id.gridView);
+        mLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (mParticipantsList.size() == 1) {
+                    return 2;
+                } else {
+                    if (mParticipantsList.size() == 2) {
+                        if (position == 0) {
+                            return 2;
+                        }
+                        return 1;
+                    } else {
+                        if (mParticipantsList.size() == 3) {
+                            if (position == 0 || position == 1) {
+                                return 1;
+                            } else {
+                                return 2;
+                            }
+                        } else {
+                            if (mParticipantsList.size() == 4) {
+                                return 1;
+                            } else {
+                                if (mParticipantsList.size() > 4) {
+                                    if (mParticipantsList.size() % 2 != 0) {
+                                        if (position == mParticipantsList.size() - 1) {
+                                            return 2;
+                                        } else {
+                                            return 1;
+                                        }
+                                    } else {
+                                        return 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return 1;
+            }
+        });
+
+        mParticipantsGrid.setLayoutManager(mLayoutManager);
+        try {
+            mParticipantsAdapter = new ParticipantsAdapter(MainActivity.this, mParticipantsList);
+            if (mParticipantsAdapter != null) {
+                mParticipantsGrid.setAdapter(mParticipantsAdapter);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         mWebViewContainer = (WebView) findViewById(R.id.webview);
         mAlert = (TextView) findViewById(R.id.quality_warning);
-        mRemoteAudioOnlyView = (RelativeLayout) findViewById(R.id.audioOnlyView);
-        mLocalAudioOnlyView = (RelativeLayout) findViewById(R.id.localAudioOnlyView);
+       // mRemoteAudioOnlyView = (RelativeLayout) findViewById(R.id.audioOnlyView);
+       // mLocalAudioOnlyView = (RelativeLayout) findViewById(R.id.localAudioOnlyView);
         mCameraFragmentContainer = (RelativeLayout) findViewById(R.id.camera_preview_fragment_container);
         mActionBarContainer = (RelativeLayout) findViewById(R.id.actionbar_preview_fragment_container);
         mTextChatContainer = (FrameLayout) findViewById(R.id.textchat_fragment_container);
@@ -423,7 +484,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         if (mWrapper != null) {
             mWrapper.enableLocalMedia(MediaType.VIDEO, video);
 
-            if ( mRemoteId != null || mScreenRemoteId != null ) {
+            updateParticipant(Participant.Type.LOCAL, null, video);
+
+          /*  if ( mRemoteId != null || mScreenRemoteId != null ) {
                 if (!video) {
                     mAudioOnlyImage = new ImageView(this);
                     mAudioOnlyImage.setImageResource(R.drawable.avatar);
@@ -440,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     mLocalAudioOnlyView.setVisibility(View.GONE);
                     mPreviewViewContainer.removeView(mLocalAudioOnlyView);
                 }
-            }
+            }*/
         }
     }
 
@@ -457,13 +520,13 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         Log.i(LOG_TAG, "OnCall");
         if ( mWrapper != null && isConnected ) {
             if (!isCallInProgress && !isScreensharing) {
+                isCallInProgress = true;
                 mWrapper.startPublishingMedia(new PreviewConfig.PreviewConfigBuilder().
                         name("Tokboxer").build(), false);
 
                 if (mActionBarFragment != null) {
                     mActionBarFragment.setEnabled(true);
                 }
-                isCallInProgress = true;
             }
             else {
                 if (isScreensharing) {
@@ -537,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
                 @Override
                 public void onPreviewViewReady(OTWrapper otWrapper, View localView) throws ListenerException {
-                    if (isScreensharing) {
+                    /*if (isScreensharing) {
                         mScreenSharingView = localView;
                         mWebViewContainer.setWebViewClient(new WebViewClient());
                         WebSettings webSettings = mWebViewContainer.getSettings();
@@ -547,19 +610,23 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     }
                     else {
                         setLocalView(localView);
-                    }
+                    }*/
+
+                    //audio/video call view
+                    participant = new Participant(Participant.Type.LOCAL, mWrapper.getLocalStreamStatus(), getParticipantSize());
+                    addNewParticipant(participant);
                 }
 
                 @Override
                 public void onPreviewViewDestroyed(OTWrapper otWrapper, View localView) throws ListenerException {
                     Log.i(LOG_TAG, "Local preview view is destroyed");
-                    setLocalView(null);
+                    removeParticipant(Participant.Type.LOCAL, null);
                 }
 
                 @Override
                 public void onRemoteViewReady(OTWrapper otWrapper, View remoteView, String remoteId, String data) throws ListenerException {
                     Log.i(LOG_TAG, "Remove view is ready");
-                    //if (remoteId == mRemoteId) {
+                    /*//if (remoteId == mRemoteId) {
                         if (isCallInProgress()) {
                             mRemotesCount++;
                             setRemoteView(remoteView, remoteId);
@@ -572,13 +639,16 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         }
                     //}
 
-                    mRemoteView = remoteView;
+                    mRemoteView = remoteView;*/
+                        Participant newParticipant = new Participant(Participant.Type.REMOTE, mWrapper.getRemoteStreamStatus(remoteId), getParticipantSize(), remoteId);
+                        addNewParticipant(newParticipant);
+
                 }
 
                 @Override
                 public void onRemoteViewDestroyed(OTWrapper otWrapper, View remoteView, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "Remote view is destroyed");
-                    mRemotesCount--;
+                  /*  mRemotesCount--;
                     setRemoteView(null, remoteId);
                     if ( remoteId == mRemoteId ){
                         mRemoteId = null;
@@ -588,7 +658,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                             mScreenRemoteId = null;
                         }
                     }
-                    reloadViews();
+                    reloadViews();*/
+                    removeParticipant(Participant.Type.REMOTE, remoteId);
                 }
 
                 @Override
@@ -621,6 +692,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                             mScreenRemoteId = remoteId;
                         }
                     }
+
+
                 }
 
                 @Override
@@ -724,7 +797,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             });
 
     private void checkRemotes(){
-        if (mRemoteId != null){
+       /* if (mRemoteId != null){
             if (!mWrapper.isReceivedMediaEnabled(mRemoteId, MediaType.VIDEO)){
                 onRemoteAudioOnly(true);
             }
@@ -734,7 +807,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         }
         if (mScreenRemoteId != null){
             setRemoteView(mWrapper.getRemoteStreamStatus(mScreenRemoteId).getView(), mScreenRemoteId);
-        }
+        }*/
     }
 
     private void stopScreensharing() {
@@ -927,7 +1000,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     private void cleanViewsAndControls() {
-        if (mRemoteId != null){
+       /* if (mRemoteId != null){
             setRemoteView(null, mRemoteId);
         }
         if (mScreenRemoteId != null){
@@ -955,7 +1028,26 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mWebViewContainer.setVisibility(View.GONE);
 
         mRemoteAnnotationsView = null;
+        mScreenAnnotationsView = null;*/
+
+        mParticipantsGrid.removeAllViews();
+        mParticipantsList.clear();
+
+        if (mActionBarFragment != null)
+            mActionBarFragment.restart();
+        if (mTextChatFragment != null) {
+            restartTextChatLayout(true);
+            mTextChatFragment.restart();
+            mTextChatContainer.setVisibility(View.GONE);
+        }
+        if (mActionBarContainer != null)
+            mActionBarContainer.setBackground(null);
+        mWebViewContainer.setVisibility(View.GONE);
+
+        mRemoteAnnotationsView = null;
         mScreenAnnotationsView = null;
+        isCallInProgress = false;
+
     }
 
     private void reloadViews(){
@@ -972,18 +1064,16 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private void showAVCall(boolean show) {
         if (show) {
-            mPreviewViewContainer.setVisibility(View.VISIBLE);
-            mRemoteViewContainer.setVisibility(View.VISIBLE);
+            mParticipantsGrid.setVisibility(View.VISIBLE);
             mCameraFragmentContainer.setVisibility(View.VISIBLE);
         } else {
-            mPreviewViewContainer.setVisibility(View.GONE);
-            mRemoteViewContainer.setVisibility(View.GONE);
+            mParticipantsGrid.setVisibility(View.GONE);
             mCameraFragmentContainer.setVisibility(View.GONE);
         }
     }
 
     private void setLocalView(View localView){
-        if (localView != null) {
+       /* if (localView != null) {
             mPreviewViewContainer.removeAllViews();
             mLayoutParamsPreview = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -1002,7 +1092,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         }
         else {
             mPreviewViewContainer.removeAllViews();
-        }
+        }*/
     }
     private void screenAnnotations() {
         try {
@@ -1046,25 +1136,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         }
     }
 
-    private RelativeLayout.LayoutParams getMultipartyLayoutParams() {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        if ( mRemoteId != null || mScreenRemoteId != null ) {
-            mLayoutParamsPreview.addRule(RelativeLayout.ALIGN_PARENT_TOP,
-                    RelativeLayout.TRUE);
-            mLayoutParamsPreview.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-                    RelativeLayout.TRUE);
-           // mLayoutParamsPreview.addRule(RelativeLayout.ABOVE, mPreviewViewContainer.getId());
-
-            mLayoutParamsPreview.width = (int) getResources().getDimension(R.dimen.preview_width);
-            mLayoutParamsPreview.height = (int) getResources().getDimension(R.dimen.preview_height);
-            mLayoutParamsPreview.rightMargin = (int) getResources().getDimension(R.dimen.preview_rightMargin);
-       //     mLayoutParamsPreview.bottomMargin = (int) getResources().getDimension(R.dimen.preview_bottomMargin);
-        }
-
-        return params;
-    }
-
     private void setRemoteView(View remoteView, String remoteId){
         if (mPreviewViewContainer.getChildCount() > 0) {
             setLocalView(mPreviewViewContainer.getChildAt(0)); //main preview view
@@ -1098,11 +1169,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     mRemoteViewContainer.setClickable(true);
                     if (mRemoteFragment != null)
                         mRemoteFragment.show();
-                }
-            }
-            else {
-                if (mRemotesCount == 2) {
-                    mRemoteViewContainer2.addView(remoteView, getMultipartyLayoutParams());
                 }
             }
         } else { //view null --> remove view
@@ -1157,5 +1223,91 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             params.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         }
         mTextChatContainer.setLayoutParams(params);
+    }
+
+    private void addNewParticipant(Participant newParticipant){
+        mParticipantsList.add(newParticipant);
+        if (isCallInProgress) {
+            updateParticipantList();
+        }
+    }
+
+    private void removeParticipant(Participant.Type type, String id) {
+        for (int i = 0; i < mParticipantsList.size(); i++) {
+            Participant participant = mParticipantsList.get(i);
+            if (participant.getType().equals(type)) {
+                if (type.equals(Participant.Type.REMOTE)) {
+                    //remote participant
+                    if (participant.getId().equals(id)) {
+                        mParticipantsList.remove(i);
+                    }
+                } else {
+                    //local participant
+                    mParticipantsList.remove(i);
+                }
+            }
+        }
+        //update list
+        updateParticipantList();
+        Collections.reverse(mParticipantsList);
+        mParticipantsAdapter.notifyDataSetChanged();
+    }
+
+    private void updateParticipantList() {
+        //update list
+        for (int i=0; i<mParticipantsList.size(); i++) {
+            Participant participant = mParticipantsList.get(i);
+            if (i == 0) {
+                DisplayMetrics metrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int width = metrics.widthPixels;
+
+                Size newSize = getParticipantSize();
+                participant.setContainer(new Size(width, newSize.getHeight()));
+            }
+            else {
+                participant.setContainer(getParticipantSize());
+            }
+            mParticipantsList.set(i, participant);
+        }
+
+        Collections.reverse(mParticipantsList);
+        mParticipantsAdapter.notifyDataSetChanged();
+    }
+
+    private void updateParticipant(Participant.Type type, String id, boolean audioOnly) {
+        for (int i = 0; i < mParticipantsList.size(); i++) {
+            Participant participant = mParticipantsList.get(i);
+            if (participant.getType().equals(type)) {
+                if (type.equals(Participant.Type.REMOTE)) {
+                    if (participant.getId().equals(id)) {
+                        participant.getStatus().setHas(MediaType.VIDEO, audioOnly);
+                        mParticipantsList.set(i, participant);
+                    }
+                } else {
+                    participant.getStatus().setHas(MediaType.VIDEO, audioOnly);
+                    mParticipantsList.set(i, participant);
+                }
+            }
+        }
+        //update list
+        updateParticipantList();
+        Collections.reverse(mParticipantsList);
+        mParticipantsAdapter.notifyDataSetChanged();
+    }
+    private Size getParticipantSize() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels; // ancho absoluto en pixels
+        int height = metrics.heightPixels; // alto absoluto en pixels
+
+        if (mParticipantsList.size() == 2) {
+            return new Size(width, height / 2);
+        } else {
+            if (mParticipantsList.size() > 2) {
+                return new Size(width / 2, height / 2);
+            }
+        }
+        return new Size(width, height);
     }
 }

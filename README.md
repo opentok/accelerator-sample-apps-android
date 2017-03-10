@@ -1,4 +1,4 @@
-![logo](../tokbox-logo.png)
+![logo](tokbox-logo.png)
 
 # OpenTok Accelerator Sample App for Android
 

@@ -1,9 +1,7 @@
 package com.tokbox.android.accelerator.sample.ui;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +16,18 @@ import java.util.List;
 
 public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ParticipantViewHolder> {
     private List<Participant> mParticipantsList = new ArrayList<>();
+    private ParticipantAdapterListener mListener;
 
-    public ParticipantsAdapter(Context context, List<Participant> participantsList) throws Exception {
+    public interface ParticipantAdapterListener {
+        void mediaControlChanged(String remoteId);
+    }
+
+    public ParticipantsAdapter(Context context, List<Participant> participantsList, ParticipantAdapterListener listener) throws Exception {
         if (participantsList == null) {
             throw new Exception("ParticipantsList cannot be null");
         }
         this.mParticipantsList = participantsList;
+        this.mListener = listener;
     }
 
     @Override
@@ -43,6 +47,11 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
         Participant participant = mParticipantsList.get(position);
         holder.container.removeAllViews();
 
+        //add id
+        holder.id = participant.getId();
+        holder.type = participant.getType();
+        holder.listener = mListener;
+
         TableRow.LayoutParams params = new TableRow.LayoutParams(participant.getContainer().getWidth(), participant.getContainer().getHeight()); // (width, height)
         holder.container.setLayoutParams(params);
 
@@ -59,6 +68,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
                 holder.container.addView(participant.getStatus().getView());
             }
         }
+
     }
 
     @Override
@@ -66,15 +76,40 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
         return (null != mParticipantsList ? mParticipantsList.size() : 0);
     }
 
-
     class ParticipantViewHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout audiOnlyView;
-        public RelativeLayout container;
+        protected RelativeLayout audiOnlyView;
+        protected RelativeLayout container;
+        protected RelativeLayout controls;
+        protected String id;
+        protected Participant.Type type;
+        protected ParticipantAdapterListener listener;
 
         public ParticipantViewHolder(View view) {
             super(view);
             this.audiOnlyView = (RelativeLayout) view.findViewById(R.id.audioOnlyView);
             this.container = (RelativeLayout) view.findViewById(R.id.itemView);
+            this.controls = (RelativeLayout) view.findViewById(R.id.remoteControls);
+
+            view.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    if (type.equals(Participant.Type.REMOTE)) {
+                        container.removeView(controls);
+                        if (controls.getVisibility() == View.GONE) {
+                            controls.setVisibility(View.VISIBLE);
+                            container.addView(controls);
+                        }
+                        else {
+                            controls.setVisibility(View.GONE);
+                        }
+                        listener.mediaControlChanged(id);
+                    }
+                }
+            });
         }
+
+
     }
+
+
 }

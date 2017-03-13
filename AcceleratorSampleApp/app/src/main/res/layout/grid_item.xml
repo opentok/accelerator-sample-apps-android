@@ -6,6 +6,35 @@
     android:gravity="center_horizontal">
 
     <RelativeLayout
+        android:id="@+id/remoteControls"
+        android:layout_width="@dimen/action_bar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/remoteVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/video_icon"
+            android:onClick="onRemoteVideoChanged"/>
+
+        <ImageButton
+            android:id="@+id/remoteAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/remoteVideo"
+            android:layout_marginTop="25dp"
+            android:background="@null"
+            android:src="@drawable/audio_icon"
+            android:onClick="onRemoteAudioChanged"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/audioOnlyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

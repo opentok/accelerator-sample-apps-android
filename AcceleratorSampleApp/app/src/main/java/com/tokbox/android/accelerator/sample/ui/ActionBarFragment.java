@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 
 import com.tokbox.android.accelerator.sample.MainActivity;
 import com.tokbox.android.accelerator.sample.R;
-import com.tokbox.android.accpack.textchat.TextChatFragment;
 import com.tokbox.android.otsdkwrapper.utils.MediaType;
 
 

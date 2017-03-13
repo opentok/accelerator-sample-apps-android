@@ -40,7 +40,6 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
     @Override
     public void onBindViewHolder(ParticipantViewHolder holder, int position) {
-        Log.i("MARINAS", "VIEW HOLDER");
         Participant participant = mParticipantsList.get(position);
         holder.container.removeAllViews();
 

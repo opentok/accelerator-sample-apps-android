@@ -389,7 +389,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         Log.i(LOG_TAG, "Disable/Enable local video");
         if (mWrapper != null) {
             mWrapper.enableLocalMedia(MediaType.VIDEO, video);
-
             updateParticipant(Participant.Type.LOCAL, null, video);
         }
     }
@@ -1006,9 +1005,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
             }
         }
-        //update list
-        updateParticipantList();
-        Collections.reverse(mParticipantsList);
         mParticipantsAdapter.notifyDataSetChanged();
     }
 

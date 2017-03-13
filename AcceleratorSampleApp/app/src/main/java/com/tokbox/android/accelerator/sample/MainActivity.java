@@ -143,9 +143,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Log.i(LOG_TAG, "OnCreate");
-
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -508,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                         mWebViewContainer.loadUrl("http://www.tokbox.com");
                     } else {
-                        //audio_icon/video call view
+                        //audio/video call view
                         Participant participant = new Participant(Participant.Type.LOCAL, mWrapper.getLocalStreamStatus(), getParticipantSize());
                         addNewParticipant(participant);
                     }
@@ -839,6 +836,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mWebViewContainer.setVisibility(View.GONE);
 
         mRemoteAnnotationsView = null;
+        mCurrentRemote = null;
         if (mScreenAnnotationsView != null) {
             mScreenSharingContainer.setVisibility(View.GONE);
             mScreenAnnotationsView.removeAllViews();

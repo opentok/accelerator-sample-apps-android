@@ -139,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.i(LOG_TAG, "OnCreate");
+
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -220,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        reloadViews();
     }
 
     @Override
@@ -525,6 +527,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 public void onRemoteViewDestroyed(OTWrapper otWrapper, View remoteView, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "Remote view is destroyed");
                     if (remoteId == mScreenRemoteId) {
+                        mScreenRemoteId = null;
                         removeRemoteScreensharing();
                     } else {
                         removeParticipant(Participant.Type.REMOTE, remoteId);
@@ -834,24 +837,16 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         restartOrientation();
     }
 
-    private void reloadViews() {
-        if (mScreenRemoteId != null) {
-            showAVCall(false);
-            mScreensharingContainer.setVisibility(View.VISIBLE);
-            mParticipantsAdapter.notifyDataSetChanged();
-        } else {
-            showAVCall(true);
-            mScreensharingContainer.setVisibility(View.GONE);
-            mParticipantsAdapter.notifyDataSetChanged();
-        }
-    }
-
     private void showAVCall(boolean show) {
-        if (show) {
+        if (show && mScreenRemoteId == null ) {
             mParticipantsGrid.setVisibility(View.VISIBLE);
+            mScreensharingContainer.setVisibility(View.GONE);
+            mScreensharingContainer.removeAllViews();
         } else {
             mParticipantsGrid.setVisibility(View.GONE);
+            mParticipantsGrid.removeAllViews();
         }
+        mParticipantsAdapter.notifyDataSetChanged();
     }
 
     private void screenAnnotations() {
@@ -933,7 +928,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             forceLandscape();
         }
         showAVCall(false);
-        mParticipantsAdapter.notifyDataSetChanged();
+        mScreensharingContainer.removeAllViews();
         mScreensharingContainer.setVisibility(View.VISIBLE);
         mScreensharingContainer.addView(screenView);
         remoteAnnotations();
@@ -941,10 +936,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     private void removeRemoteScreensharing() {
-        mParticipantsGrid.setVisibility(View.VISIBLE);
-        mScreensharingContainer.setVisibility(View.GONE);
-        mScreensharingContainer.removeAllViews();
-        mParticipantsAdapter.notifyDataSetChanged();
+        showAVCall(true);
         isRemoteAnnotations = false;
         showAnnotationsToolbar(false);
         restartOrientation();

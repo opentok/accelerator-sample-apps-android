@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     if (mWrapper.getRemoteStreamStatus(remoteId).getType() == StreamStatus.StreamType.SCREEN) {
                         Log.i(LOG_TAG, "Participant is sharing the screen");
                         mScreenRemoteId = remoteId;
-                        addRemoteScreensharing(remoteId, remoteView);
+                        addRemoteScreenSharing(remoteId, remoteView);
                     } else {
                         Participant newParticipant = new Participant(Participant.Type.REMOTE, mWrapper.getRemoteStreamStatus(remoteId), getParticipantSize(), remoteId);
                         addNewParticipant(newParticipant);
@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     Log.i(LOG_TAG, "Remote view is destroyed");
                     if (remoteId == mScreenRemoteId) {
                         mScreenRemoteId = null;
-                        removeRemoteScreensharing();
+                        removeRemoteScreenSharing();
                     } else {
                         removeParticipant(Participant.Type.REMOTE, remoteId);
                     }
@@ -923,7 +923,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mTextChatContainer.setLayoutParams(params);
     }
 
-    private void addRemoteScreensharing(String remoteId, View screenView) {
+    private void addRemoteScreenSharing(String remoteId, View screenView) {
         if (mWrapper.getRemoteStreamStatus(remoteId).getWidth() > mWrapper.getRemoteStreamStatus(remoteId).getHeight()) {
             forceLandscape();
         }
@@ -935,7 +935,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         isRemoteAnnotations = true;
     }
 
-    private void removeRemoteScreensharing() {
+    private void removeRemoteScreenSharing() {
         showAVCall(true);
         isRemoteAnnotations = false;
         showAnnotationsToolbar(false);

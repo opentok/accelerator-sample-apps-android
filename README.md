@@ -23,8 +23,7 @@ To develop your multiparty accelerator sample app:
 
 ### Add dependencies
 
-The multiparty sample app uses the [OpenTok Accelerator Core](https://github.com/opentok/accelerator-core-android), the [Opentok Accelerator Annotation](https://github.com/opentok/accelerator-annotation-android) and [OpenTok Accelerator TextChat](https://github.com/opentok/accelerator-textchat-android). The Accelerator Core is dependency of the Accelerator Annotations and Accelerator TextChat too, so following the transitive dependencies rules in maven, we don't need to add the Accelerator Core in the sample app.
-
+The multiparty sample app uses the [OpenTok Accelerator Core](https://github.com/opentok/accelerator-core-android), the [Opentok Accelerator Annotation](https://github.com/opentok/accelerator-annotation-android) and [OpenTok Accelerator TextChat](https://github.com/opentok/accelerator-textchat-android). 
 There are two options to add the dependencies:
 
 #### Using Maven
@@ -38,12 +37,22 @@ There are two options to add the dependencies:
 2. Modify the `build.gradle` for your activity and add the following code snippet to the section labeled `dependencies`:
   
   ```gradle
+    compile 'com.opentok.android:opentok-accelerator-core:1.0.+'
     compile 'com.opentok.android:opentok-accelerator-annotation:1.+'
     compile 'com.opentok.android:opentok-accelerator-textchat:1.0.+'
   ```
 
-
 #### Using the repository
+
+1. Clone the [OpenTok Accelerator Core repo](https://github.com/opentok/accelerator-core-android).
+2. From your app project, right-click the app name and select **New > Module > Import Gradle Project**.
+3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-core-android**, and click **Finish**.
+4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
+
+```
+compile project(':accelerator-core-android')
+
+```
 
 1. Clone the [OpenTok Accelerator TextChat repo](https://github.com/opentok/accelerator-textchat-android).
 2. From your app project, right-click the app name and select **New > Module > Import Gradle Project**.
@@ -90,7 +99,7 @@ Then, the credentials values will be used in the Core Wrapper configuration.
     //init the wrapper
     OTConfig config =
           new OTConfig.OTConfigBuilder(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN,
-            OpenTokConfig.API_KEY).name("one-to-one-sample-app").subscribeAutomatically(true).subscribeToSelf(false).build();
+            OpenTokConfig.API_KEY).name("sample-app").subscribeAutomatically(true).subscribeToSelf(false).build();
     
     if ( config != null ) {
       mWrapper = new OTWrapper(MainActivity.this, config);
@@ -120,9 +129,9 @@ For detail about the APIs used to develop this sample, see the [OpenTok Android 
 | `ParticipantAdapter `   |  Custom RecyclerView.Adapter responsible for providing views that represent items in the data set.|
 
 
-### Session and stream management
+### Session and streams management
 
-The `OTWrapper` class, included in the Accelerator Core for Android, is the backbone of the one-to-one communication features for the app.
+The `OTWrapper` class, included in the Accelerator Core for Android, is the backbone of the multiparty communication features for the app.
 
 This class uses the OpenTok API to initiate the client connection to the OpenTok session and manage the audio and video streams.
 ```java

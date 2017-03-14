@@ -72,6 +72,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.PreviewControlCallbacks, AnnotationsView.AnnotationsListener,
@@ -135,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private int mOrientation;
 
     //Current remote
-    private String mRemoteConnId;
     private String mCurrentRemote;
 
     @Override
@@ -484,8 +485,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         if (mTextChatFragment != null) {
                             mTextChatFragment.init();
                         }
-                    } else {
-                        mRemoteConnId = connId; //to-fix
                     }
 
                     if (isReadyToCall) {
@@ -903,7 +902,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private void remoteAnnotations() {
         try {
-            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, mRemoteConnId);
+            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, mWrapper.getRemoteConnId(mScreenRemoteId));
             mRemoteAnnotationsView.setVideoRenderer(mRemoteRenderer);
             mRemoteAnnotationsView.attachToolbar(mAnnotationsToolbar);
             mRemoteAnnotationsView.setAnnotationsListener(this);

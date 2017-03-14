@@ -85,47 +85,39 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     //OpenTok calls
     private OTWrapper mWrapper;
 
-    private RelativeLayout mScreenSharingContainer;
+    //Participants Grid management
     private RecyclerView mParticipantsGrid;
     private GridLayoutManager mLayoutManager;
-    private RelativeLayout mActionBarContainer;
-
     private ParticipantsAdapter mParticipantsAdapter;
     private List<Participant> mParticipantsList = new ArrayList<>();
 
-    //Local screensharing view
-    private WebView mWebViewContainer;
-
-
-    //UI control bars fragments
+    //Fragments and containers
     private ActionBarFragment mActionBarFragment;
     private FragmentTransaction mFragmentTransaction;
     private FrameLayout mTextChatContainer;
-
-    //TextChat fragment
+    private RelativeLayout mActionBarContainer;
     private TextChatFragment mTextChatFragment;
 
-    ProgressDialog mProgressDialog;
-
-    //annotations
+    //Annotations
     private AnnotationsToolbar mAnnotationsToolbar;
     private AnnotationsVideoRenderer mRemoteRenderer;
     private AnnotationsVideoRenderer mScreensharingRenderer;
     private AnnotationsView mRemoteAnnotationsView;
 
-    //screensharing
+    //ScreenSharing
+    private RelativeLayout mScreenSharingContainer;
     private AnnotationsView mScreenAnnotationsView;
     private View mScreenSharingView;
     private ScreenSharingBar mScreensharingBar;
     private TextView mCallToolbar;
     private String mScreenRemoteId;
+    private WebView mWebViewContainer;
 
     private TextView mAlert;
     private CountDownTimer mCountDownTimer;
-    private String mRemoteConnId;
-    private int mOrientation;
+    private ProgressDialog mProgressDialog;
 
-    //permissions
+    //Permissions
     private boolean mAudioPermission = false;
     private boolean mVideoPermission = false;
     private boolean mWriteExternalStoragePermission = false;
@@ -137,8 +129,13 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private boolean isRemoteAnnotations = false;
     private boolean isScreenSharing = false;
     private boolean isAnnotations = false;
+    private boolean isReadyToCall = false;
 
-    //remote
+    //Current orientation
+    private int mOrientation;
+
+    //Current remote
+    private String mRemoteConnId;
     private String mCurrentRemote;
 
     @Override
@@ -346,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         } else {
             showAVCall(false);
             mTextChatContainer.setVisibility(View.VISIBLE);
+            mActionBarFragment.unreadMessages(false);
         }
     }
 
@@ -427,9 +425,16 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     showAVCall(true);
                 } else {
                     mWrapper.stopPublishingMedia(false);
+                    mWrapper.disconnect();
                     isCallInProgress = false;
                 }
                 cleanViewsAndControls();
+            }
+        }
+        else {
+            if (mWrapper != null) {
+                isReadyToCall = true;
+                mWrapper.connect();
             }
         }
     }
@@ -480,7 +485,12 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                             mTextChatFragment.init();
                         }
                     } else {
-                        mRemoteConnId = connId;
+                        mRemoteConnId = connId; //to-fix
+                    }
+
+                    if (isReadyToCall) {
+                        isReadyToCall = false;
+                        onCall();
                     }
                 }
 
@@ -490,6 +500,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     if (connId == mWrapper.getOwnConnId()) {
                         Log.i(LOG_TAG, "Disconnected to the session");
                         cleanViewsAndControls();
+                        isConnected = false;
                     }
                 }
 
@@ -842,6 +853,10 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mScreenAnnotationsView.removeAllViews();
         }
         isCallInProgress = false;
+        isReadyToCall = false;
+        isRemoteAnnotations = false;
+        isScreenSharing = false;
+        isAnnotations = false;
         restartOrientation();
     }
 

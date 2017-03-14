@@ -67,16 +67,14 @@
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:id="@+id/unread_messages"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="true"
             android:background="@drawable/unread_messages"
             android:visibility="gone"
-            android:layout_alignParentTop="false"
             android:alpha="0.8"
             android:adjustViewBounds="false"
             android:layout_marginRight="12dp"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginStart="38dp"
+            android:layout_alignTop="@+id/textchat"
+            android:layout_alignStart="@+id/textchat" />
 
         <ImageButton
             android:id="@+id/screenSharing"

@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,10 +72,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.PreviewControlCallbacks, AnnotationsView.AnnotationsListener,
-        ScreenSharingBar.ScreenSharingBarListener, TextChatFragment.TextChatListener {
+        ScreenSharingBar.ScreenSharingBarListener, TextChatFragment.TextChatListener, ParticipantsAdapter.ParticipantAdapterListener {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -84,47 +87,39 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     //OpenTok calls
     private OTWrapper mWrapper;
 
-    private RelativeLayout mScreensharingContainer;
+    //Participants Grid management
     private RecyclerView mParticipantsGrid;
     private GridLayoutManager mLayoutManager;
-    private RelativeLayout mActionBarContainer;
-
     private ParticipantsAdapter mParticipantsAdapter;
     private List<Participant> mParticipantsList = new ArrayList<>();
 
-    //Local screensharing view
-    private WebView mWebViewContainer;
-
-
-    //UI control bars fragments
+    //Fragments and containers
     private ActionBarFragment mActionBarFragment;
     private FragmentTransaction mFragmentTransaction;
     private FrameLayout mTextChatContainer;
-
-    //TextChat fragment
+    private RelativeLayout mActionBarContainer;
     private TextChatFragment mTextChatFragment;
 
-    ProgressDialog mProgressDialog;
-
-    //annotations
+    //Annotations
     private AnnotationsToolbar mAnnotationsToolbar;
     private AnnotationsVideoRenderer mRemoteRenderer;
     private AnnotationsVideoRenderer mScreensharingRenderer;
     private AnnotationsView mRemoteAnnotationsView;
 
-    //screensharing
+    //ScreenSharing
+    private RelativeLayout mScreenSharingContainer;
     private AnnotationsView mScreenAnnotationsView;
     private View mScreenSharingView;
     private ScreenSharingBar mScreensharingBar;
     private TextView mCallToolbar;
     private String mScreenRemoteId;
+    private WebView mWebViewContainer;
 
     private TextView mAlert;
     private CountDownTimer mCountDownTimer;
-    private String mRemoteConnId;
-    private int mOrientation;
+    private ProgressDialog mProgressDialog;
 
-    //permissions
+    //Permissions
     private boolean mAudioPermission = false;
     private boolean mVideoPermission = false;
     private boolean mWriteExternalStoragePermission = false;
@@ -134,8 +129,15 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private boolean isConnected = false;
     private boolean isCallInProgress = false;
     private boolean isRemoteAnnotations = false;
-    private boolean isScreensharing = false;
+    private boolean isScreenSharing = false;
     private boolean isAnnotations = false;
+    private boolean isReadyToCall = false;
+
+    //Current orientation
+    private int mOrientation;
+
+    //Current remote
+    private String mCurrentRemote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         setupMultipartyLayout();
         mParticipantsGrid.setLayoutManager(mLayoutManager);
         try {
-            mParticipantsAdapter = new ParticipantsAdapter(MainActivity.this, mParticipantsList);
+            mParticipantsAdapter = new ParticipantsAdapter(MainActivity.this, mParticipantsList, MainActivity.this);
             if (mParticipantsAdapter != null) {
                 mParticipantsGrid.setAdapter(mParticipantsAdapter);
             }
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
         mWebViewContainer = (WebView) findViewById(R.id.webview);
         mAlert = (TextView) findViewById(R.id.quality_warning);
-        mScreensharingContainer = (RelativeLayout) findViewById(R.id.screensharing_container);
+        mScreenSharingContainer = (RelativeLayout) findViewById(R.id.screensharing_container);
         mActionBarContainer = (RelativeLayout) findViewById(R.id.actionbar_fragment_container);
         mTextChatContainer = (FrameLayout) findViewById(R.id.textchat_fragment_container);
 
@@ -220,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        reloadViews();
     }
 
     @Override
@@ -289,16 +290,23 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     public boolean isScreensharing() {
-        return isScreensharing;
+        return isScreenSharing;
     }
 
     public void onCallToolbar(View view) {
         showAll();
     }
 
+    //ParticipantAdapter listener
+    @Override
+    public void mediaControlChanged(String remoteId) {
+        Log.i(LOG_TAG, "Participant control changed: "+remoteId);
+        mCurrentRemote = remoteId;
+    }
+
     @Override
     public void onScreenSharing() {
-        if (isScreensharing) {
+        if (isScreenSharing) {
             stopScreensharing();
             //start avcall
             isCallInProgress = true;
@@ -308,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mWebViewContainer.setVisibility(View.GONE);
             mActionBarFragment.showAnnotations(false);
         } else {
-            isScreensharing = true;
+            isScreenSharing = true;
             showAVCall(false);
             mWrapper.stopPublishingMedia(false); //stop call
             isCallInProgress = false;
@@ -336,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         } else {
             showAVCall(false);
             mTextChatContainer.setVisibility(View.VISIBLE);
+            mActionBarFragment.unreadMessages(false);
         }
     }
 
@@ -387,14 +396,13 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         Log.i(LOG_TAG, "Disable/Enable local video");
         if (mWrapper != null) {
             mWrapper.enableLocalMedia(MediaType.VIDEO, video);
-
             updateParticipant(Participant.Type.LOCAL, null, video);
         }
     }
 
     @Override
     public void onDisableLocalAudio(boolean audio) {
-        Log.i(LOG_TAG, "Disable/Enable local audio");
+        Log.i(LOG_TAG, "Disable/Enable local audio_icon");
         if (mWrapper != null) {
             mWrapper.enableLocalMedia(MediaType.AUDIO, audio);
         }
@@ -405,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     public void onCall() {
         Log.i(LOG_TAG, "OnCall");
         if (mWrapper != null && isConnected) {
-            if (!isCallInProgress && !isScreensharing) {
+            if (!isCallInProgress && !isScreenSharing) {
                 isCallInProgress = true;
                 mWrapper.startPublishingMedia(new PreviewConfig.PreviewConfigBuilder().
                         name("Tokboxer").build(), false);
@@ -413,14 +421,21 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     mActionBarFragment.setEnabled(true);
                 }
             } else {
-                if (isScreensharing) {
+                if (isScreenSharing) {
                     stopScreensharing();
                     showAVCall(true);
                 } else {
                     mWrapper.stopPublishingMedia(false);
+                    mWrapper.disconnect();
                     isCallInProgress = false;
                 }
                 cleanViewsAndControls();
+            }
+        }
+        else {
+            if (mWrapper != null) {
+                isReadyToCall = true;
+                mWrapper.connect();
             }
         }
     }
@@ -470,8 +485,11 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         if (mTextChatFragment != null) {
                             mTextChatFragment.init();
                         }
-                    } else {
-                        mRemoteConnId = connId;
+                    }
+
+                    if (isReadyToCall) {
+                        isReadyToCall = false;
+                        onCall();
                     }
                 }
 
@@ -481,13 +499,14 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     if (connId == mWrapper.getOwnConnId()) {
                         Log.i(LOG_TAG, "Disconnected to the session");
                         cleanViewsAndControls();
+                        isConnected = false;
                     }
                 }
 
                 @Override
                 public void onPreviewViewReady(OTWrapper otWrapper, View localView) throws ListenerException {
                     Log.i(LOG_TAG, "Local preview view is ready");
-                    if (isScreensharing) {
+                    if (isScreenSharing) {
                         //Share local web view
                         mScreenSharingView = localView;
                         mWebViewContainer.setWebViewClient(new WebViewClient());
@@ -514,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     if (mWrapper.getRemoteStreamStatus(remoteId).getType() == StreamStatus.StreamType.SCREEN) {
                         Log.i(LOG_TAG, "Participant is sharing the screen");
                         mScreenRemoteId = remoteId;
-                        addRemoteScreensharing(remoteId, remoteView);
+                        addRemoteScreenSharing(remoteId, remoteView);
                     } else {
                         Participant newParticipant = new Participant(Participant.Type.REMOTE, mWrapper.getRemoteStreamStatus(remoteId), getParticipantSize(), remoteId);
                         addNewParticipant(newParticipant);
@@ -525,7 +544,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 public void onRemoteViewDestroyed(OTWrapper otWrapper, View remoteView, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "Remote view is destroyed");
                     if (remoteId == mScreenRemoteId) {
-                        removeRemoteScreensharing();
+                        mScreenRemoteId = null;
+                        removeRemoteScreenSharing();
                     } else {
                         removeParticipant(Participant.Type.REMOTE, remoteId);
                     }
@@ -640,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     //Private methods
     private void stopScreensharing() {
         //hide screensharing bar and view
-        isScreensharing = false;
+        isScreenSharing = false;
         ((ViewGroup) mScreenSharingView).removeView(mScreenAnnotationsView);
         showScreensharingBar(false);
         mActionBarFragment.restartScreensharing(); //restart screensharing UI
@@ -826,37 +846,34 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mWebViewContainer.setVisibility(View.GONE);
 
         mRemoteAnnotationsView = null;
+        mCurrentRemote = null;
         if (mScreenAnnotationsView != null) {
-            mScreensharingContainer.setVisibility(View.GONE);
+            mScreenSharingContainer.setVisibility(View.GONE);
             mScreenAnnotationsView.removeAllViews();
         }
         isCallInProgress = false;
+        isReadyToCall = false;
+        isRemoteAnnotations = false;
+        isScreenSharing = false;
+        isAnnotations = false;
         restartOrientation();
     }
 
-    private void reloadViews() {
-        if (mScreenRemoteId != null) {
-            showAVCall(false);
-            mScreensharingContainer.setVisibility(View.VISIBLE);
-            mParticipantsAdapter.notifyDataSetChanged();
-        } else {
-            showAVCall(true);
-            mScreensharingContainer.setVisibility(View.GONE);
-            mParticipantsAdapter.notifyDataSetChanged();
-        }
-    }
-
     private void showAVCall(boolean show) {
-        if (show) {
+        if (show && mScreenRemoteId == null ) {
             mParticipantsGrid.setVisibility(View.VISIBLE);
+            mScreenSharingContainer.setVisibility(View.GONE);
+            mScreenSharingContainer.removeAllViews();
         } else {
             mParticipantsGrid.setVisibility(View.GONE);
+            mParticipantsGrid.removeAllViews();
         }
+        mParticipantsAdapter.notifyDataSetChanged();
     }
 
     private void screenAnnotations() {
         try {
-            if (isScreensharing) {
+            if (isScreenSharing) {
                 mScreenAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, true);
                 //size of annotations screen, by default will be all the screen
                 //take into account the calltoolbar as well
@@ -885,11 +902,11 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private void remoteAnnotations() {
         try {
-            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, mRemoteConnId);
+            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, mWrapper.getRemoteConnId(mScreenRemoteId));
             mRemoteAnnotationsView.setVideoRenderer(mRemoteRenderer);
             mRemoteAnnotationsView.attachToolbar(mAnnotationsToolbar);
             mRemoteAnnotationsView.setAnnotationsListener(this);
-            ((ViewGroup) mScreensharingContainer).addView(mRemoteAnnotationsView);
+            ((ViewGroup) mScreenSharingContainer).addView(mRemoteAnnotationsView);
             mActionBarFragment.enableAnnotations(true);
             mActionBarFragment.showAnnotations(true);
         } catch (Exception e) {
@@ -928,23 +945,20 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mTextChatContainer.setLayoutParams(params);
     }
 
-    private void addRemoteScreensharing(String remoteId, View screenView) {
+    private void addRemoteScreenSharing(String remoteId, View screenView) {
         if (mWrapper.getRemoteStreamStatus(remoteId).getWidth() > mWrapper.getRemoteStreamStatus(remoteId).getHeight()) {
             forceLandscape();
         }
         showAVCall(false);
-        mParticipantsAdapter.notifyDataSetChanged();
-        mScreensharingContainer.setVisibility(View.VISIBLE);
-        mScreensharingContainer.addView(screenView);
+        mScreenSharingContainer.removeAllViews();
+        mScreenSharingContainer.setVisibility(View.VISIBLE);
+        mScreenSharingContainer.addView(screenView);
         remoteAnnotations();
         isRemoteAnnotations = true;
     }
 
-    private void removeRemoteScreensharing() {
-        mParticipantsGrid.setVisibility(View.VISIBLE);
-        mScreensharingContainer.setVisibility(View.GONE);
-        mScreensharingContainer.removeAllViews();
-        mParticipantsAdapter.notifyDataSetChanged();
+    private void removeRemoteScreenSharing() {
+        showAVCall(true);
         isRemoteAnnotations = false;
         showAnnotationsToolbar(false);
         restartOrientation();
@@ -1014,9 +1028,6 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
             }
         }
-        //update list
-        updateParticipantList();
-        Collections.reverse(mParticipantsList);
         mParticipantsAdapter.notifyDataSetChanged();
     }
 
@@ -1078,4 +1089,30 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             }
         });
     }
+
+    public void onRemoteVideoChanged(View v) {
+       if (mWrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.VIDEO)) {
+           mWrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, false);
+           ((ImageButton)v).setImageResource(R.drawable.no_video_icon);
+           updateParticipant(Participant.Type.REMOTE, mCurrentRemote, true);
+
+       }
+       else {
+           mWrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, true);
+           ((ImageButton)v).setImageResource(R.drawable.video_icon);
+           updateParticipant(Participant.Type.REMOTE, mCurrentRemote, false);
+       }
+    }
+
+    public void onRemoteAudioChanged(View v) {
+        if (mWrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.AUDIO)) {
+            mWrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, false);
+            ((ImageButton)v).setImageResource(R.drawable.no_audio_icon);
+        }
+        else {
+            mWrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, true);
+            ((ImageButton)v).setImageResource(R.drawable.audio_icon);
+        }
+    }
+
 }

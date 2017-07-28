@@ -271,6 +271,10 @@ public class ActionBarFragment extends Fragment {
         }
     }
 
+    public void setCallButtonEnabled(boolean enabled) {
+        mCallBtn.setEnabled(enabled);
+    }
+
     public void restart() {
         setEnabled(false);
         mCallBtn.setBackgroundResource(R.drawable.initiate_call_button);

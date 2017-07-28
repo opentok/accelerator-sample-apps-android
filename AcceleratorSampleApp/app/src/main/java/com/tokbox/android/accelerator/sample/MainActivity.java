@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onCall() {
         Log.i(LOG_TAG, "OnCall");
+        mActionBarFragment.setCallButtonEnabled(false);
         if (mWrapper != null && isConnected) {
             if (!isCallInProgress && !isScreenSharing) {
                 isCallInProgress = true;
@@ -558,11 +559,15 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     if (screensharing) {
                         screenAnnotations();
                     }
+
+                    mActionBarFragment.setCallButtonEnabled(true);
                 }
 
                 @Override
                 public void onStoppedPublishingMedia(OTWrapper otWrapper, boolean isScreensharing) throws ListenerException {
                     Log.i(LOG_TAG, "Local stopped streaming video.");
+                    mActionBarFragment.setCallButtonEnabled(true);
+                    isCallInProgress = false;
                 }
 
                 @Override
@@ -602,6 +607,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     mWrapper.disconnect(); //end communication
                     mProgressDialog.dismiss();
                     cleanViewsAndControls(); //restart views
+                    mActionBarFragment.setCallButtonEnabled(false);
                 }
             });
 

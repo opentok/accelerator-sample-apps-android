@@ -513,8 +513,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         mWebViewContainer.setWebViewClient(new WebViewClient());
                         WebSettings webSettings = mWebViewContainer.getSettings();
                         webSettings.setJavaScriptEnabled(true);
-                        mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                        mWebViewContainer.loadUrl("http://www.tokbox.com");
+                        mWebViewContainer.loadUrl("https://www.tokbox.com");
                     } else {
                         //audio/video call view
                         Participant participant = new Participant(Participant.Type.LOCAL, mWrapper.getLocalStreamStatus(), getParticipantSize());

@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.webkit.WebView;
+import android.webkit.WebChromeClient;
 
 import com.opentok.android.OpentokError;
 import com.tokbox.android.accelerator.sample.ui.ActionBarFragment;
@@ -513,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                         mWebViewContainer.setWebViewClient(new WebViewClient());
                         WebSettings webSettings = mWebViewContainer.getSettings();
                         webSettings.setJavaScriptEnabled(true);
-                        mWebViewContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                        mWebViewContainer.setWebChromeClient(new WebChromeClient());
                         mWebViewContainer.loadUrl("http://www.tokbox.com");
                     } else {
                         //audio/video call view

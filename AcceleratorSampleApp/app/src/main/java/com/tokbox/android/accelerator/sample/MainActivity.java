@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements ActionBarFragment.PreviewControlCallbacks, AnnotationsView.AnnotationsListener,
         ScreenSharingBar.ScreenSharingBarListener, TextChatFragment.TextChatListener, ParticipantsAdapter.ParticipantAdapterListener {
@@ -476,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 @Override
                 public void onConnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException {
                     Log.i(LOG_TAG, "Connected to the session. Number of participants: " + participantsCount);
-                    if (mWrapper.getOwnConnId() == connId) {
+                    if (Objects.equals(mWrapper.getOwnConnId(), connId)) {
                         isConnected = true;
                         mProgressDialog.dismiss();
                         //TextchatFragment requires a session. In the current accelerator, the session is connected in the app and then,
@@ -495,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 @Override
                 public void onDisconnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException {
                     Log.i(LOG_TAG, "Connection dropped: " + connId);
-                    if (connId == mWrapper.getOwnConnId()) {
+                    if (Objects.equals(connId, mWrapper.getOwnConnId())) {
                         Log.i(LOG_TAG, "Disconnected to the session");
                         cleanViewsAndControls();
                         isConnected = false;
@@ -541,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 @Override
                 public void onRemoteViewDestroyed(OTWrapper otWrapper, View remoteView, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "Remote view is destroyed");
-                    if (remoteId == mScreenRemoteId) {
+                    if (Objects.equals(remoteId, mScreenRemoteId)) {
                         mScreenRemoteId = null;
                         removeRemoteScreenSharing();
                     } else {

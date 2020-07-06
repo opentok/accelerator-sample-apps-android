@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.tokbox.android.accelerator.sample"
         minSdkVersion 21
@@ -23,16 +23,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.google.android.material:material:1.0.0'
+    testImplementation 'junit:junit:4.13'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
     implementation 'com.opentok.android:opentok-accelerator-core:1.0.22'
     implementation 'com.opentok.android:opentok-accelerator-annotation:1.0.3'

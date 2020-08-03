@@ -1,6 +1,6 @@
-![logo](tokbox-logo.png)
-
 # OpenTok Accelerator Sample App for Android
+
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
 ## Quick start
 
@@ -20,7 +20,6 @@ To develop your multiparty accelerator sample app:
 1. In the **Quick Start** panel, click **Open an existing Android Studio Project**.
 1. Navigate to the **android** folder, select the **AcceleratorSampleApp** folder, and click **Choose**.
 
-
 ### Add dependencies
 
 The multiparty sample app uses the [OpenTok Accelerator Core](https://github.com/opentok/accelerator-core-android), the [Opentok Accelerator Annotation](https://github.com/opentok/accelerator-annotation-android) and [OpenTok Accelerator TextChat](https://github.com/opentok/accelerator-textchat-android). 
@@ -34,7 +33,7 @@ There are two options to add the dependencies:
     maven { url  "http://tokbox.bintray.com/maven" }
   ```
 
-2. Modify the `build.gradle` for your activity and add the following code snippet to the section labeled `dependencies`:
+1. Modify the `build.gradle` for your activity and add the following code snippet to the section labeled `dependencies`:
   
   ```gradle
     compile 'com.opentok.android:opentok-accelerator-core:1.0.+'
@@ -49,7 +48,7 @@ There are two options to add the dependencies:
 3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-core-android**, and click **Finish**.
 4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
 
-```
+```gradle
 compile project(':accelerator-core-android')
 
 ```
@@ -59,7 +58,7 @@ compile project(':accelerator-core-android')
 3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-textchat-android**, and click **Finish**.
 4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
 
-```
+```gradle
 compile project(':accelerator-textchat-android')
 
 ```
@@ -69,7 +68,7 @@ compile project(':accelerator-textchat-android')
 3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-annotation-android**, and click **Finish**.
 4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
 
-```
+```gradle
 compile project(':accelerator-annotation-android')
 
 ```
@@ -100,7 +99,7 @@ Then, the credentials values will be used in the Core Wrapper configuration.
     OTConfig config =
           new OTConfig.OTConfigBuilder(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN,
             OpenTokConfig.API_KEY).name("sample-app").subscribeAutomatically(true).subscribeToSelf(false).build();
-    
+
     if ( config != null ) {
       mWrapper = new OTWrapper(MainActivity.this, config);
       mWrapper.addBasicListener(mBasicListener);
@@ -116,26 +115,24 @@ This section describes best practices the sample app code uses to implement the 
 
 For detail about the APIs used to develop this sample, see the [OpenTok Android SDK Reference](https://tokbox.com/developer/sdks/android/reference/) and [Android API Reference](http://developer.android.com/reference/packages.html).
 
-
 ### Class design
 
-| Class        | Description  |
-| ------------- | ------------- |
-| `MainActivity`    | Implements the UI and media control callbacks. |
-| `OpenTokConfig`   | Stores the information required to configure the session and authorize the app to make requests to the backend server.   |
-| `ActionBarFragment`   | Manages the toolbar for the local audio and video controls, the start/end call, text-chat and screensharing buttons.  |
-| `ScreensharingBar`   | Defines a view to represent the ScreenSharingBar. |
-| `Participant `   | Represents an item in the data set |
-| `ParticipantAdapter `   |  Custom RecyclerView.Adapter responsible for providing views that represent items in the data set.|
-
+| Class                 | Description                                                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `MainActivity`        | Implements the UI and media control callbacks.                                                                         |
+| `OpenTokConfig`       | Stores the information required to configure the session and authorize the app to make requests to the backend server. |
+| `ActionBarFragment`   | Manages the toolbar for the local audio and video controls, the start/end call, text-chat and screensharing buttons.   |
+| `ScreensharingBar`    | Defines a view to represent the ScreenSharingBar.                                                                      |
+| `Participant `        | Represents an item in the data set                                                                                     |
+| `ParticipantAdapter ` | Custom RecyclerView.Adapter responsible for providing views that represent items in the data set.                      |
 
 ### Session and streams management
 
 The `OTWrapper` class, included in the Accelerator Core for Android, is the backbone of the multiparty communication features for the app.
 
 This class uses the OpenTok API to initiate the client connection to the OpenTok session and manage the audio and video streams.
+
 ```java
-  
   mWrapper.connect();
   
   mWrapper.startPublishingMedia(new PreviewConfig.PreviewConfigBuilder().
@@ -144,7 +141,6 @@ This class uses the OpenTok API to initiate the client connection to the OpenTok
   mWrapper.enableLocalMedia(MediaType.AUDIO, audio);
   
   mWrapper.disconnect();
-
 ```
 
 The BasicListener and AdvancedListener interface monitor state changes in the communication, and defines the following methods:
@@ -165,8 +161,8 @@ The BasicListener and AdvancedListener interface monitor state changes in the co
     public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screensharing) throws ListenerException { //...}
     //...
   });
-
 ```
+
 ```java
   //Advanced Listener from OTWrapper
   private AdvancedListener mAdvancedListener =
@@ -232,5 +228,19 @@ The UI for the multiparty audio/video communication is represented by an Android
     }
 ```
 
+## Development and Contributing
 
+Interested in contributing? We :heart: pull requests! See the [Contribution](CONTRIBUTING.md) guidelines.
 
+## Getting Help
+
+We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+
+- Open an issue on this repository
+- See <https://support.tokbox.com/> for support options
+- Tweet at us! We're [@VonageDev](https://twitter.com/VonageDev) on Twitter
+- Or [join the Vonage Developer Community Slack](https://developer.nexmo.com/community/slack)
+
+## Further Reading
+
+- Check out the Developer Documentation at <https://tokbox.com/developer/>

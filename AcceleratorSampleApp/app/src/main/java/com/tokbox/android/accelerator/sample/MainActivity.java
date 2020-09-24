@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private final String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private final int permsRequestCode = 200;
+    private final String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private final int PERMISSION_CODE = 200;
 
     //OpenTok calls
     private OTWrapper mWrapper;
@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mCallToolbar = (TextView) findViewById(R.id.call_toolbar);
 
         //request Marshmallow camera permission
-        if (ContextCompat.checkSelfPermission(this, permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permissions, permsRequestCode);
+                requestPermissions(PERMISSIONS, PERMISSION_CODE);
             }
         } else {
             mVideoPermission = true;
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onRequestPermissionsResult(final int requestCode, final String[] permissions,
                                            int[] grantResults) {
-        if (requestCode == permsRequestCode) {
+        if (requestCode == PERMISSION_CODE) {
             mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            requestPermissions(permissions, permsRequestCode);
+                            requestPermissions(permissions, PERMISSION_CODE);
                         }
                     }
                 });

@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
         mWebViewContainer = (WebView) findViewById(R.id.webview);
         mAlert = (TextView) findViewById(R.id.quality_warning);
-        mScreenSharingContainer = (RelativeLayout) findViewById(R.id.screensharing_container);
+        mScreenSharingContainer = (RelativeLayout) findViewById(R.id.screen_sharing_container);
         mActionBarContainer = (RelativeLayout) findViewById(R.id.actionbar_fragment_container);
         mTextChatContainer = (FrameLayout) findViewById(R.id.textchat_fragment_container);
 
@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         return isCallInProgress;
     }
 
-    public boolean isScreensharing() {
+    public boolean isScreenSharing() {
         return isScreenSharing;
     }
 
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onScreenSharing() {
         if (isScreenSharing) {
-            stopScreensharing();
+            stopScreenSharing();
             //start avcall
             isCallInProgress = true;
             showAVCall(true);
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mWrapper.stopPublishingMedia(false); //stop call
             isCallInProgress = false;
             PreviewConfig.PreviewConfigBuilder builder = new PreviewConfig.PreviewConfigBuilder().name("TokboxerScreen").renderer(mScreensharingRenderer);
-            mWrapper.startPublishingMedia(builder.build(), true); //start screensharing
+            mWrapper.startPublishingMedia(builder.build(), true); //start screen sharing
             mWebViewContainer.setVisibility(View.VISIBLE);
             mActionBarFragment.showAnnotations(true);
         }
@@ -378,14 +378,14 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     @Override
     public void onRestarted() {
-        Log.i(LOG_TAG, "Restarted textchat");
+        Log.i(LOG_TAG, "Restarted text chat");
     }
 
 
-    //ScreensharingBar listener event
+    //Screen sharing bar listener event
     @Override
     public void onClose() {
-        Log.i(LOG_TAG, "Close screensharing");
+        Log.i(LOG_TAG, "Close screen sharing");
         onScreenSharing();
     }
 
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
             } else {
                 if (isScreenSharing) {
-                    stopScreensharing();
+                    stopScreenSharing();
                     showAVCall(true);
                 } else {
                     mWrapper.stopPublishingMedia(false);
@@ -443,15 +443,15 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     //Annotations events
     @Override
     public void onScreencaptureReady(Bitmap bmp) {
-        Log.i(LOG_TAG, "Screencapture is ready");
-        saveScreencapture(bmp);
+        Log.i(LOG_TAG, "Screen capture is ready");
+        saveScreenCapture(bmp);
     }
 
     @Override
     public void onAnnotationsSelected(AnnotationsView.Mode mode) {
         if (mode.equals(AnnotationsView.Mode.Pen) || mode.equals(AnnotationsView.Mode.Text)) {
             showAll();
-            //show minimized calltoolbar
+            //show minimized call toolbar
             mCallToolbar.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mAnnotationsToolbar.getLayoutParams();
             params.addRule(RelativeLayout.ABOVE, mCallToolbar.getId());
@@ -551,10 +551,10 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
-                public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screensharing) throws ListenerException {
+                public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screenSharing) throws ListenerException {
                     Log.i(LOG_TAG, "Local started streaming video.");
 
-                    if (screensharing) {
+                    if (screenSharing) {
                         screenAnnotations();
                     }
 
@@ -562,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
-                public void onStoppedPublishingMedia(OTWrapper otWrapper, boolean isScreensharing) throws ListenerException {
+                public void onStoppedPublishingMedia(OTWrapper otWrapper, boolean screenSharing) throws ListenerException {
                     Log.i(LOG_TAG, "Local stopped streaming video.");
                     mActionBarFragment.setCallButtonEnabled(true);
                     isCallInProgress = false;
@@ -691,12 +691,12 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             });
 
     //Private methods
-    private void stopScreensharing() {
-        //hide screensharing bar and view
+    private void stopScreenSharing() {
+        //hide screen sharing bar and view
         isScreenSharing = false;
         ((ViewGroup) mScreenSharingView).removeView(mScreenAnnotationsView);
         showScreensharingBar(false);
-        mActionBarFragment.restartScreensharing(); //restart screensharing UI
+        mActionBarFragment.restartScreensharing(); //restart screen sharing UI
 
         //hide annotations
         showAnnotationsToolbar(false);
@@ -704,7 +704,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mWrapper.stopPublishingMedia(true);
     }
 
-    private void saveScreencapture(Bitmap bmp) {
+    private void saveScreenCapture(Bitmap bmp) {
         if (bmp != null) {
             Bitmap annotationsBmp = null;
             Bitmap overlayBmp = null;
@@ -820,7 +820,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         if (show) {
             mScreensharingBar = new ScreenSharingBar(MainActivity.this, this);
 
-            //add screensharing bar on top of the screen
+            //add screen sharing bar on top of the screen
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,

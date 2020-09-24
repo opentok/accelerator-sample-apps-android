@@ -92,7 +92,7 @@ public class ActionBarFragment extends Fragment {
                     break;
 
                 case R.id.screenSharing:
-                    updateScreensharing();
+                    updateScreenSharing();
                     break;
 
                 case R.id.annotations:
@@ -213,16 +213,16 @@ public class ActionBarFragment extends Fragment {
             mControlCallbacks.onCall();
     }
 
-    private void updateScreensharing() {
-        mVideoBtn.setOnClickListener(!mActivity.isScreensharing()
+    private void updateScreenSharing() {
+        mVideoBtn.setOnClickListener(!mActivity.isScreenSharing()
                 ? null
                 : mBtnClickListener);
 
-        mAnnotationsBtn.setOnClickListener(!mActivity.isScreensharing()
+        mAnnotationsBtn.setOnClickListener(!mActivity.isScreenSharing()
                 ? mBtnClickListener
                 : null);
 
-        mScreenSharingBtn.setBackgroundResource(!mActivity.isScreensharing()
+        mScreenSharingBtn.setBackgroundResource(!mActivity.isScreenSharing()
                 ? R.drawable.bckg_icon_selected
                 : R.drawable.bckg_icon);
 

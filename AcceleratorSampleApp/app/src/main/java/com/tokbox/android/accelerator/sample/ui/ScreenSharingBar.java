@@ -27,7 +27,7 @@ public class ScreenSharingBar extends RelativeLayout {
         super(context);
 
         this.mListener = listener;
-        this.setBackgroundColor(getResources().getColor(R.color.screensharing_bar));
+        this.setBackgroundColor(getResources().getColor(R.color.screen_sharing_bar));
 
         mCloseBtn = new ImageButton(context);
         mCloseBtn.setImageDrawable(getResources().getDrawable(R.drawable.close));
@@ -49,7 +49,7 @@ public class ScreenSharingBar extends RelativeLayout {
         this.addView(mCloseBtn, params);
 
         mTextView = new TextView(context);
-        mTextView.setText(R.string.screensharing_text);
+        mTextView.setText(R.string.screen_sharing_text);
         params = new RelativeLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);

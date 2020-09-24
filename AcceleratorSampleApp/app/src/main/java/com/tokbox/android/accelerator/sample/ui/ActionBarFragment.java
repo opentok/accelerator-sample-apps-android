@@ -179,7 +179,7 @@ public class ActionBarFragment extends Fragment {
         return rootView;
     }
 
-    public void updateLocalAudio() {
+    private void updateLocalAudio() {
         if (!mActivity.getWrapper().isLocalMediaEnabled(MediaType.AUDIO)) {
             mControlCallbacks.onDisableLocalAudio(true);
             mAudioBtn.setImageResource(R.drawable.mic_icon);
@@ -189,7 +189,7 @@ public class ActionBarFragment extends Fragment {
         }
     }
 
-    public void updateLocalVideo() {
+    private void updateLocalVideo() {
         if (!mActivity.getWrapper().isLocalMediaEnabled(MediaType.VIDEO)){
             mControlCallbacks.onDisableLocalVideo(true);
             mVideoBtn.setImageResource(R.drawable.video_icon);
@@ -199,7 +199,7 @@ public class ActionBarFragment extends Fragment {
         }
     }
 
-    public void updateCall() {
+    private void updateCall() {
         mCallBtn.setImageResource(!mActivity.isCallInProgress()
                 ? R.drawable.hang_up
                 : R.drawable.start_call);
@@ -282,7 +282,7 @@ public class ActionBarFragment extends Fragment {
         mAnnotationsBtn.setBackgroundResource(R.drawable.bckg_icon);
     }
 
-    public void restartAnnotations(){
+    private void restartAnnotations(){
         mAnnotationsBtn.setBackgroundResource(R.drawable.bckg_icon);
         enableAnnotations(false);
     }
@@ -293,7 +293,7 @@ public class ActionBarFragment extends Fragment {
                     : null);
         }
     }
-    public void restartScreensharing(){
+    public void restartScreenSharing(){
         mScreenSharingBtn.setBackgroundResource(R.drawable.bckg_icon);
     }
 

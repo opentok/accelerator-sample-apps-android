@@ -694,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         isScreenSharing = false;
         ((ViewGroup) mScreenSharingView).removeView(mScreenAnnotationsView);
         showScreensharingBar(false);
-        mActionBarFragment.restartScreensharing(); //restart screen sharing UI
+        mActionBarFragment.restartScreenSharing(); //restart screen sharing UI
 
         //hide annotations
         showAnnotationsToolbar(false);

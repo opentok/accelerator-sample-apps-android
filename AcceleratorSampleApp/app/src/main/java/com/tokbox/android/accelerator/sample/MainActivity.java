@@ -246,9 +246,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     @Override
-    public void onRequestPermissionsResult(final int permsRequestCode, final String[] permissions,
+    public void onRequestPermissionsResult(final int requestCode, final String[] permissions,
                                            int[] grantResults) {
-        if (permsRequestCode == 200) {
+        if (requestCode == permsRequestCode) {
             mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
             mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;

@@ -631,6 +631,30 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
+                public void onReconnected(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "The session reconnected remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.reconnected, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onDisconnected(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "The session disconnected remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.disconnected, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onAudioEnabled(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "Audio enabled remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.audio_enabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onAudioDisabled(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "Audio disabled remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.audio_disabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
                 public void onVideoQualityWarning(OTWrapper otWrapper, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "The quality has degraded");
 
@@ -649,6 +673,11 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 @Override
                 public void onVideoQualityWarningLifted(OTWrapper otWrapper, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "The quality has improved");
+                }
+
+                @Override
+                public void onAudioLevelUpdated(float v) throws ListenerException {
+
                 }
 
                 @Override

@@ -674,8 +674,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
-                public void onAudioLevelUpdated(float v) throws ListenerException {
-
+                public void onAudioLevelUpdated(float audioLevel) throws ListenerException {
+                    Log.i(LOG_TAG, "Audio level changed. Level: " + audioLevel);
                 }
 
                 @Override

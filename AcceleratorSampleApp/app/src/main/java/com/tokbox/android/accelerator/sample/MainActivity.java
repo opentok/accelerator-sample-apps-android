@@ -1067,8 +1067,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private Size getParticipantSize() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels; // ancho absoluto en pixels
-        int height = metrics.heightPixels; // alto absoluto en pixels
+        int width = metrics.widthPixels; // absolute width in pixels
+        int height = metrics.heightPixels; // absolute height in pixels
 
         if (mParticipantsList.size() == 2) {
             return new Size(width, height / 2);

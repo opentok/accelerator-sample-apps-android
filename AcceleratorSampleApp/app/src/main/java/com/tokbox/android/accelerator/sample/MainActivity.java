@@ -825,7 +825,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.TYPE_APPLICATION_PANEL,
-                    0 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
             params.x = 0;

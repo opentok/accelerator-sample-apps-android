@@ -248,35 +248,33 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onRequestPermissionsResult(final int permsRequestCode, final String[] permissions,
                                            int[] grantResults) {
-        switch (permsRequestCode) {
-            case 200:
-                mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                mWriteExternalStoragePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+        if (permsRequestCode == 200) {
+            mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+            mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+            mWriteExternalStoragePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
 
-                if (!mVideoPermission || !mAudioPermission || !mReadExternalStoragePermission || !mWriteExternalStoragePermission) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle(getResources().getString(R.string.permissions_denied_title));
-                    builder.setMessage(getResources().getString(R.string.alert_permissions_denied));
-                    builder.setPositiveButton("I'M SURE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+            if (!mVideoPermission || !mAudioPermission || !mReadExternalStoragePermission || !mWriteExternalStoragePermission) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getResources().getString(R.string.permissions_denied_title));
+                builder.setMessage(getResources().getString(R.string.alert_permissions_denied));
+                builder.setPositiveButton("I'M SURE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("RE-TRY", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(permissions, permsRequestCode);
                         }
-                    });
-                    builder.setNegativeButton("RE-TRY", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(permissions, permsRequestCode);
-                            }
-                        }
-                    });
-                    builder.show();
-                }
-                break;
+                    }
+                });
+                builder.show();
+            }
         }
     }
 

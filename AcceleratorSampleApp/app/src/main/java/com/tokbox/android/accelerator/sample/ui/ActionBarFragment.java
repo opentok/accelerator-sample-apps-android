@@ -24,7 +24,6 @@ public class ActionBarFragment extends Fragment {
     private static final String LOGTAG = MainActivity.class.getName();
 
     private MainActivity mActivity;
-    private View rootView;
 
     private ImageButton mAudioBtn;
     private ImageButton mVideoBtn;
@@ -42,17 +41,17 @@ public class ActionBarFragment extends Fragment {
 
     public interface PreviewControlCallbacks {
 
-        public void onDisableLocalAudio(boolean audio);
+        void onDisableLocalAudio(boolean audio);
 
-        public void onDisableLocalVideo(boolean video);
+        void onDisableLocalVideo(boolean video);
 
-        public void onCall();
+        void onCall();
 
-        public void onScreenSharing();
+        void onScreenSharing();
 
-        public void onAnnotations();
+        void onAnnotations();
 
-        public void onTextChat();
+        void onTextChat();
 
     }
 
@@ -142,7 +141,7 @@ public class ActionBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOGTAG, "OnCreate ActionBarFragment");
 
-        rootView = inflater.inflate(R.layout.actionbar_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.actionbar_fragment, container, false);
         mAudioBtn = (ImageButton) rootView.findViewById(R.id.localAudio);
         mVideoBtn = (ImageButton) rootView.findViewById(R.id.localVideo);
         mCallBtn = (ImageButton) rootView.findViewById(R.id.call);

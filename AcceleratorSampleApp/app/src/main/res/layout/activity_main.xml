@@ -33,7 +33,7 @@
             android:visibility="gone" />
 
         <RelativeLayout
-            android:id="@+id/screensharing_container"
+            android:id="@+id/screen_sharing_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"></RelativeLayout>

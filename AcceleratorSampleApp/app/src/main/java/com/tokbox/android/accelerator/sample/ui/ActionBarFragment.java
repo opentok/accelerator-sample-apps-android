@@ -24,7 +24,6 @@ public class ActionBarFragment extends Fragment {
     private static final String LOGTAG = MainActivity.class.getName();
 
     private MainActivity mActivity;
-    private View rootView;
 
     private ImageButton mAudioBtn;
     private ImageButton mVideoBtn;
@@ -42,17 +41,17 @@ public class ActionBarFragment extends Fragment {
 
     public interface PreviewControlCallbacks {
 
-        public void onDisableLocalAudio(boolean audio);
+        void onDisableLocalAudio(boolean audio);
 
-        public void onDisableLocalVideo(boolean video);
+        void onDisableLocalVideo(boolean video);
 
-        public void onCall();
+        void onCall();
 
-        public void onScreenSharing();
+        void onScreenSharing();
 
-        public void onAnnotations();
+        void onAnnotations();
 
-        public void onTextChat();
+        void onTextChat();
 
     }
 
@@ -92,7 +91,7 @@ public class ActionBarFragment extends Fragment {
                     break;
 
                 case R.id.screenSharing:
-                    updateScreensharing();
+                    updateScreenSharing();
                     break;
 
                 case R.id.annotations:
@@ -142,7 +141,7 @@ public class ActionBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOGTAG, "OnCreate ActionBarFragment");
 
-        rootView = inflater.inflate(R.layout.actionbar_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.actionbar_fragment, container, false);
         mAudioBtn = (ImageButton) rootView.findViewById(R.id.localAudio);
         mVideoBtn = (ImageButton) rootView.findViewById(R.id.localVideo);
         mCallBtn = (ImageButton) rootView.findViewById(R.id.call);
@@ -180,7 +179,7 @@ public class ActionBarFragment extends Fragment {
         return rootView;
     }
 
-    public void updateLocalAudio() {
+    private void updateLocalAudio() {
         if (!mActivity.getWrapper().isLocalMediaEnabled(MediaType.AUDIO)) {
             mControlCallbacks.onDisableLocalAudio(true);
             mAudioBtn.setImageResource(R.drawable.mic_icon);
@@ -190,7 +189,7 @@ public class ActionBarFragment extends Fragment {
         }
     }
 
-    public void updateLocalVideo() {
+    private void updateLocalVideo() {
         if (!mActivity.getWrapper().isLocalMediaEnabled(MediaType.VIDEO)){
             mControlCallbacks.onDisableLocalVideo(true);
             mVideoBtn.setImageResource(R.drawable.video_icon);
@@ -200,7 +199,7 @@ public class ActionBarFragment extends Fragment {
         }
     }
 
-    public void updateCall() {
+    private void updateCall() {
         mCallBtn.setImageResource(!mActivity.isCallInProgress()
                 ? R.drawable.hang_up
                 : R.drawable.start_call);
@@ -213,16 +212,16 @@ public class ActionBarFragment extends Fragment {
             mControlCallbacks.onCall();
     }
 
-    private void updateScreensharing() {
-        mVideoBtn.setOnClickListener(!mActivity.isScreensharing()
+    private void updateScreenSharing() {
+        mVideoBtn.setOnClickListener(!mActivity.isScreenSharing()
                 ? null
                 : mBtnClickListener);
 
-        mAnnotationsBtn.setOnClickListener(!mActivity.isScreensharing()
+        mAnnotationsBtn.setOnClickListener(!mActivity.isScreenSharing()
                 ? mBtnClickListener
                 : null);
 
-        mScreenSharingBtn.setBackgroundResource(!mActivity.isScreensharing()
+        mScreenSharingBtn.setBackgroundResource(!mActivity.isScreenSharing()
                 ? R.drawable.bckg_icon_selected
                 : R.drawable.bckg_icon);
 
@@ -283,7 +282,7 @@ public class ActionBarFragment extends Fragment {
         mAnnotationsBtn.setBackgroundResource(R.drawable.bckg_icon);
     }
 
-    public void restartAnnotations(){
+    private void restartAnnotations(){
         mAnnotationsBtn.setBackgroundResource(R.drawable.bckg_icon);
         enableAnnotations(false);
     }
@@ -294,7 +293,7 @@ public class ActionBarFragment extends Fragment {
                     : null);
         }
     }
-    public void restartScreensharing(){
+    public void restartScreenSharing(){
         mScreenSharingBtn.setBackgroundResource(R.drawable.bckg_icon);
     }
 

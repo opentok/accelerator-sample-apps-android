@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private final String[] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private final int permsRequestCode = 200;
+    private final String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private final int PERMISSION_CODE = 200;
 
     //OpenTok calls
     private OTWrapper mWrapper;
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
         mWebViewContainer = (WebView) findViewById(R.id.webview);
         mAlert = (TextView) findViewById(R.id.quality_warning);
-        mScreenSharingContainer = (RelativeLayout) findViewById(R.id.screensharing_container);
+        mScreenSharingContainer = (RelativeLayout) findViewById(R.id.screen_sharing_container);
         mActionBarContainer = (RelativeLayout) findViewById(R.id.actionbar_fragment_container);
         mTextChatContainer = (FrameLayout) findViewById(R.id.textchat_fragment_container);
 
@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mCallToolbar = (TextView) findViewById(R.id.call_toolbar);
 
         //request Marshmallow camera permission
-        if (ContextCompat.checkSelfPermission(this, permissions[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(permissions, permsRequestCode);
+                requestPermissions(PERMISSIONS, PERMISSION_CODE);
             }
         } else {
             mVideoPermission = true;
@@ -246,37 +246,35 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     @Override
-    public void onRequestPermissionsResult(final int permsRequestCode, final String[] permissions,
+    public void onRequestPermissionsResult(final int requestCode, final String[] permissions,
                                            int[] grantResults) {
-        switch (permsRequestCode) {
-            case 200:
-                mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-                mWriteExternalStoragePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+        if (requestCode == PERMISSION_CODE) {
+            mVideoPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            mAudioPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+            mReadExternalStoragePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+            mWriteExternalStoragePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
 
-                if (!mVideoPermission || !mAudioPermission || !mReadExternalStoragePermission || !mWriteExternalStoragePermission) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle(getResources().getString(R.string.permissions_denied_title));
-                    builder.setMessage(getResources().getString(R.string.alert_permissions_denied));
-                    builder.setPositiveButton("I'M SURE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+            if (!mVideoPermission || !mAudioPermission || !mReadExternalStoragePermission || !mWriteExternalStoragePermission) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getResources().getString(R.string.permissions_denied_title));
+                builder.setMessage(getResources().getString(R.string.alert_permissions_denied));
+                builder.setPositiveButton("I'M SURE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("RE-TRY", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(permissions, PERMISSION_CODE);
                         }
-                    });
-                    builder.setNegativeButton("RE-TRY", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(permissions, permsRequestCode);
-                            }
-                        }
-                    });
-                    builder.show();
-                }
-                break;
+                    }
+                });
+                builder.show();
+            }
         }
     }
 
@@ -288,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         return isCallInProgress;
     }
 
-    public boolean isScreensharing() {
+    public boolean isScreenSharing() {
         return isScreenSharing;
     }
 
@@ -306,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     @Override
     public void onScreenSharing() {
         if (isScreenSharing) {
-            stopScreensharing();
+            stopScreenSharing();
             //start avcall
             isCallInProgress = true;
             showAVCall(true);
@@ -320,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mWrapper.stopPublishingMedia(false); //stop call
             isCallInProgress = false;
             PreviewConfig.PreviewConfigBuilder builder = new PreviewConfig.PreviewConfigBuilder().name("TokboxerScreen").renderer(mScreensharingRenderer);
-            mWrapper.startPublishingMedia(builder.build(), true); //start screensharing
+            mWrapper.startPublishingMedia(builder.build(), true); //start screen sharing
             mWebViewContainer.setVisibility(View.VISIBLE);
             mActionBarFragment.showAnnotations(true);
         }
@@ -378,14 +376,14 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     @Override
     public void onRestarted() {
-        Log.i(LOG_TAG, "Restarted textchat");
+        Log.i(LOG_TAG, "Restarted text chat");
     }
 
 
-    //ScreensharingBar listener event
+    //Screen sharing bar listener event
     @Override
     public void onClose() {
-        Log.i(LOG_TAG, "Close screensharing");
+        Log.i(LOG_TAG, "Close screen sharing");
         onScreenSharing();
     }
 
@@ -422,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
             } else {
                 if (isScreenSharing) {
-                    stopScreensharing();
+                    stopScreenSharing();
                     showAVCall(true);
                 } else {
                     mWrapper.stopPublishingMedia(false);
@@ -443,15 +441,15 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     //Annotations events
     @Override
     public void onScreencaptureReady(Bitmap bmp) {
-        Log.i(LOG_TAG, "Screencapture is ready");
-        saveScreencapture(bmp);
+        Log.i(LOG_TAG, "Screen capture is ready");
+        saveScreenCapture(bmp);
     }
 
     @Override
     public void onAnnotationsSelected(AnnotationsView.Mode mode) {
         if (mode.equals(AnnotationsView.Mode.Pen) || mode.equals(AnnotationsView.Mode.Text)) {
             showAll();
-            //show minimized calltoolbar
+            //show minimized call toolbar
             mCallToolbar.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mAnnotationsToolbar.getLayoutParams();
             params.addRule(RelativeLayout.ABOVE, mCallToolbar.getId());
@@ -551,10 +549,10 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
-                public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screensharing) throws ListenerException {
+                public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screenSharing) throws ListenerException {
                     Log.i(LOG_TAG, "Local started streaming video.");
 
-                    if (screensharing) {
+                    if (screenSharing) {
                         screenAnnotations();
                     }
 
@@ -562,7 +560,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
-                public void onStoppedPublishingMedia(OTWrapper otWrapper, boolean isScreensharing) throws ListenerException {
+                public void onStoppedPublishingMedia(OTWrapper otWrapper, boolean screenSharing) throws ListenerException {
                     Log.i(LOG_TAG, "Local stopped streaming video.");
                     mActionBarFragment.setCallButtonEnabled(true);
                     isCallInProgress = false;
@@ -631,6 +629,30 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
+                public void onReconnected(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "The session reconnected remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.reconnected, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onDisconnected(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "The session disconnected remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.disconnected, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onAudioEnabled(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "Audio enabled remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.audio_enabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onAudioDisabled(OTWrapper otWrapper, String remoteId) {
+                    Log.i(LOG_TAG, "Audio disabled remoteId: " + remoteId);
+                    Toast.makeText(MainActivity.this, R.string.audio_disabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
                 public void onVideoQualityWarning(OTWrapper otWrapper, String remoteId) throws ListenerException {
                     Log.i(LOG_TAG, "The quality has degraded");
 
@@ -652,6 +674,11 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 }
 
                 @Override
+                public void onAudioLevelUpdated(float audioLevel) throws ListenerException {
+                    Log.i(LOG_TAG, "Audio level changed. Level: " + audioLevel);
+                }
+
+                @Override
                 public void onError(OTWrapper otWrapper, OpentokError error) throws ListenerException {
                     Log.i(LOG_TAG, "Error " + error.getErrorCode() + "-" + error.getMessage());
                     Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
@@ -662,12 +689,12 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             });
 
     //Private methods
-    private void stopScreensharing() {
-        //hide screensharing bar and view
+    private void stopScreenSharing() {
+        //hide screen sharing bar and view
         isScreenSharing = false;
         ((ViewGroup) mScreenSharingView).removeView(mScreenAnnotationsView);
         showScreensharingBar(false);
-        mActionBarFragment.restartScreensharing(); //restart screensharing UI
+        mActionBarFragment.restartScreenSharing(); //restart screen sharing UI
 
         //hide annotations
         showAnnotationsToolbar(false);
@@ -675,7 +702,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         mWrapper.stopPublishingMedia(true);
     }
 
-    private void saveScreencapture(Bitmap bmp) {
+    private void saveScreenCapture(Bitmap bmp) {
         if (bmp != null) {
             Bitmap annotationsBmp = null;
             Bitmap overlayBmp = null;
@@ -791,12 +818,12 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
         if (show) {
             mScreensharingBar = new ScreenSharingBar(MainActivity.this, this);
 
-            //add screensharing bar on top of the screen
+            //add screen sharing bar on top of the screen
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.TYPE_APPLICATION_PANEL,
-                    0 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
             params.x = 0;
@@ -1038,8 +1065,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private Size getParticipantSize() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels; // ancho absoluto en pixels
-        int height = metrics.heightPixels; // alto absoluto en pixels
+        int width = metrics.widthPixels; // absolute width in pixels
+        int height = metrics.heightPixels; // absolute height in pixels
 
         if (mParticipantsList.size() == 2) {
             return new Size(width, height / 2);

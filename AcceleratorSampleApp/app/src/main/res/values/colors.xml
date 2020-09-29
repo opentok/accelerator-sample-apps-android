@@ -14,5 +14,5 @@
     <color name="quality_warning">#fef9c8</color>
     <color name="warning_text">#ad7212</color>
     <color name="bckg_bar">#cc000000</color>
-    <color name="screensharing_bar">#7ED321</color>
+    <color name="screen_sharing_bar">#7ED321</color>
 </resources>

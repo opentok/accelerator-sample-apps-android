@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
                 @Override
                 public void onConnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException {
-                    Log.i(LOG_TAG, "Connected to the session. Number of participants: " + participantsCount);
+                    Log.i(LOG_TAG, "Connected to the session. Number of participants: " + participantsCount + ", connId: " + connId);
                     if (Objects.equals(mWrapper.getOwnConnId(), connId)) {
                         isConnected = true;
                         mProgressDialog.dismiss();
@@ -493,7 +493,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
                 @Override
                 public void onDisconnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException {
-                    Log.i(LOG_TAG, "Connection dropped: " + connId);
+                    Log.i(LOG_TAG,
+                            "Connection dropped: Number of participants: " + participantsCount + ", connId: " + connId);
                     if (Objects.equals(connId, mWrapper.getOwnConnId())) {
                         Log.i(LOG_TAG, "Disconnected to the session");
                         cleanViewsAndControls();
@@ -600,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
                 public void onError(OTWrapper otWrapper, OpentokError error) throws ListenerException {
                     Log.i(LOG_TAG, "Error " + error.getErrorCode() + "-" + error.getMessage());
                     Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    mWrapper.disconnect(); //end communication
+                    mWrapper.disconnect();
                     mProgressDialog.dismiss();
                     cleanViewsAndControls(); //restart views
                     mActionBarFragment.setCallButtonEnabled(false);

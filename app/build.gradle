@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "com.tokbox.android.accelerator.sample"
         minSdkVersion 21
@@ -37,10 +37,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
-    implementation 'com.opentok.android:opentok-accelerator-core:1.0.23'
+    implementation 'com.opentok.android:opentok-accelerator-core:1.0.24'
     implementation 'com.opentok.android:opentok-accelerator-annotation:1.0.3'
     implementation 'com.opentok.android:opentok-accelerator-textchat:1.0.6'
 }

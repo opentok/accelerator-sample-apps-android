@@ -1,12 +1,11 @@
-package com.tokbox.android.accelerator.sample.ui;
+package com.opentok.android.accelerator.sample.ui;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.tokbox.android.accelerator.sample.R;
+import com.opentok.android.accelerator.sample.R;
 
 /**
  * Defines a view to represent the ScreenSharingBar.

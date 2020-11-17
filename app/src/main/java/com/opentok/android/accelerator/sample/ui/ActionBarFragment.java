@@ -1,22 +1,21 @@
-package com.tokbox.android.accelerator.sample.ui;
+package com.opentok.android.accelerator.sample.ui;
 
 import android.app.Activity;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-
-import com.tokbox.android.accelerator.sample.MainActivity;
-import com.tokbox.android.accelerator.sample.R;
-import com.tokbox.android.otsdkwrapper.utils.MediaType;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import com.opentok.accelerator.core.utils.MediaType;
+import com.opentok.android.accelerator.sample.MainActivity;
+import com.opentok.android.accelerator.sample.R;
 
 
 public class ActionBarFragment extends Fragment {

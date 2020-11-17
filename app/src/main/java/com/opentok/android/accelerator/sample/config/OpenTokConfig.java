@@ -1,4 +1,4 @@
-package com.tokbox.android.accelerator.sample.config;
+package com.opentok.android.accelerator.sample.config;
 
 public class OpenTokConfig {
 

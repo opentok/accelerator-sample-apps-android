@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_backg"
     android:keepScreenOn="true"
-    tools:context="com.tokbox.android.accelerator.sample.MainActivity">
+    tools:context="com.opentok.android.accelerator.sample.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             android:layout_centerHorizontal="true"
             android:visibility="visible"></RelativeLayout>
 
-        <com.tokbox.android.annotations.AnnotationsToolbar
+        <com.opentok.android.annotations.AnnotationsToolbar
             android:id="@+id/annotations_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

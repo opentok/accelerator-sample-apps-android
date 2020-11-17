@@ -1,15 +1,14 @@
-package com.tokbox.android.accelerator.sample.ui;
+package com.opentok.android.accelerator.sample.ui;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
-
-import com.tokbox.android.accelerator.sample.R;
-import com.tokbox.android.otsdkwrapper.utils.MediaType;
+import androidx.recyclerview.widget.RecyclerView;
+import com.opentok.accelerator.core.utils.MediaType;
+import com.opentok.android.accelerator.sample.R;
 
 import java.util.ArrayList;
 import java.util.List;

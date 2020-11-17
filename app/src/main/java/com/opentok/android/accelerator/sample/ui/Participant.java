@@ -1,9 +1,8 @@
-package com.tokbox.android.accelerator.sample.ui;
+package com.opentok.android.accelerator.sample.ui;
 
 import android.util.Size;
+import com.opentok.accelerator.core.utils.StreamStatus;
 
-
-import com.tokbox.android.otsdkwrapper.utils.StreamStatus;
 
 public class Participant {
     public enum Type {

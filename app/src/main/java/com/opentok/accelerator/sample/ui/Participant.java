@@ -1,4 +1,4 @@
-package com.opentok.android.accelerator.sample.ui;
+package com.opentok.accelerator.sample.ui;
 
 import android.util.Size;
 import com.opentok.accelerator.core.utils.StreamStatus;

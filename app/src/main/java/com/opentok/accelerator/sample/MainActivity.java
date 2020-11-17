@@ -1,4 +1,4 @@
-package com.opentok.android.accelerator.sample;
+package com.opentok.accelerator.sample;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -42,14 +42,14 @@ import com.opentok.accelerator.core.utils.OTConfig;
 import com.opentok.accelerator.core.utils.PreviewConfig;
 import com.opentok.accelerator.core.utils.StreamStatus;
 import com.opentok.accelerator.core.wrapper.OTWrapper;
+import com.opentok.accelerator.sample.config.OpenTokConfig;
+import com.opentok.accelerator.sample.ui.ActionBarFragment;
+import com.opentok.accelerator.sample.ui.Participant;
+import com.opentok.accelerator.sample.ui.ParticipantsAdapter;
+import com.opentok.accelerator.sample.ui.ScreenSharingBar;
 import com.opentok.accelerator.textchat.ChatMessage;
 import com.opentok.accelerator.textchat.TextChatFragment;
 import com.opentok.android.OpentokError;
-import com.opentok.android.accelerator.sample.config.OpenTokConfig;
-import com.opentok.android.accelerator.sample.ui.ActionBarFragment;
-import com.opentok.android.accelerator.sample.ui.Participant;
-import com.opentok.android.accelerator.sample.ui.ParticipantsAdapter;
-import com.opentok.android.accelerator.sample.ui.ScreenSharingBar;
 
 import java.io.File;
 import java.io.FileOutputStream;

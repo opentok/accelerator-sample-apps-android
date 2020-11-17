@@ -1,4 +1,4 @@
-package com.opentok.android.accelerator.sample;
+package com.opentok.accelerator.sample;
 
 import org.junit.Test;
 

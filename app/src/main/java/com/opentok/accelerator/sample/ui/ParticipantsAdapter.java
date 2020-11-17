@@ -1,4 +1,4 @@
-package com.opentok.android.accelerator.sample.ui;
+package com.opentok.accelerator.sample.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import androidx.recyclerview.widget.RecyclerView;
 import com.opentok.accelerator.core.utils.MediaType;
-import com.opentok.android.accelerator.sample.R;
+import com.opentok.accelerator.sample.R;
 
 import java.util.ArrayList;
 import java.util.List;

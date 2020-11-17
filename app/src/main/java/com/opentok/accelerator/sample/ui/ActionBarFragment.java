@@ -1,4 +1,4 @@
-package com.opentok.android.accelerator.sample.ui;
+package com.opentok.accelerator.sample.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,8 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import com.opentok.accelerator.core.utils.MediaType;
-import com.opentok.android.accelerator.sample.MainActivity;
-import com.opentok.android.accelerator.sample.R;
+import com.opentok.accelerator.sample.MainActivity;
+import com.opentok.accelerator.sample.R;
 
 
 public class ActionBarFragment extends Fragment {

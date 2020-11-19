@@ -32,19 +32,21 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    implementation 'androidx.appcompat:appcompat:1.2.0'
+
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 
     implementation files('../../accelerator-core-android/accelerator-core/build/outputs/aar/opentok-accelerator-core' +
             '-debug.aar/opentok-accelerator-core-2.0.0-alpha.1.aar')
-
 //    implementation 'com.opentok.android:opentok-accelerator-core:1.0.24'
-
     implementation "com.opentok.android:opentok-android-sdk:2.18.1"
+    implementation 'com.opentok.android:opentok-solutions-logging:1.0.3'
+
+
+    testImplementation 'junit:junit:4.13.1'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

@@ -163,9 +163,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mReadExternalStoragePermission = true;
         }
 
-        //init the sdk wrapper
-        OTConfig config =
-                new OTConfig.OTConfigBuilder(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN, OpenTokConfig.API_KEY).name("accelerator-sample-app").subscribeAutomatically(true).subscribeToSelf(false).build();
+                OTConfig config = new OTConfig(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN, OpenTokConfig.API_KEY,
+                "accelerator-sample-app", false, true);
 
         mWrapper = new OTWrapper(MainActivity.this, config);
 

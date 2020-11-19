@@ -51,7 +51,7 @@
             android:layout_centerHorizontal="true"
             android:visibility="visible"></RelativeLayout>
 
-        <com.opentok.android.annotations.AnnotationsToolbar
+        <com.opentok.accelerator.annotation.AnnotationsToolbar
             android:id="@+id/annotations_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

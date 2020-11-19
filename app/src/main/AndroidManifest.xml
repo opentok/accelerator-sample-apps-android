@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.opentok.accelerator.sample"
     xmlns:tools="http://schemas.android.com/tools">
@@ -6,7 +7,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 
@@ -21,7 +21,7 @@
         tools:replace="android:theme">
 
         <activity
-            android:name="com.opentok.accelerator.sample.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
@@ -31,5 +31,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

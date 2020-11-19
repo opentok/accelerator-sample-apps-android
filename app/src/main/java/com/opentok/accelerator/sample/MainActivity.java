@@ -38,11 +38,9 @@ import com.opentok.accelerator.annotation.AnnotationsView;
 import com.opentok.accelerator.annotation.utils.AnnotationsVideoRenderer;
 import com.opentok.accelerator.core.listeners.*;
 import com.opentok.accelerator.core.utils.MediaType;
-import com.opentok.accelerator.core.utils.OTConfig;
 import com.opentok.accelerator.core.utils.PreviewConfig;
 import com.opentok.accelerator.core.utils.StreamStatus;
 import com.opentok.accelerator.core.wrapper.OTWrapper;
-import com.opentok.accelerator.sample.config.OpenTokConfig;
 import com.opentok.accelerator.sample.ui.ActionBarFragment;
 import com.opentok.accelerator.sample.ui.Participant;
 import com.opentok.accelerator.sample.ui.ParticipantsAdapter;
@@ -163,10 +161,8 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
             mReadExternalStoragePermission = true;
         }
 
-                OTConfig config = new OTConfig(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN, OpenTokConfig.API_KEY,
-                "accelerator-sample-app", false, true);
 
-        mWrapper = new OTWrapper(MainActivity.this, config);
+        mWrapper = new OTWrapper(MainActivity.this, AppConfig.otConfig);
 
         //set listener to receive the communication events, and add UI to these events
         mWrapper.addBasicListener(mBasicListener);
@@ -830,7 +826,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     }
 
     private void initTextChatFragment() {
-        mTextChatFragment = TextChatFragment.newInstance(mWrapper.getSession(), OpenTokConfig.API_KEY);
+        mTextChatFragment = TextChatFragment.newInstance(mWrapper.getSession(), AppConfig.otConfig.getApiKey());
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.textchat_fragment_container, mTextChatFragment).commit();
         getSupportFragmentManager().executePendingTransactions();
@@ -887,7 +883,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
     private void screenAnnotations() {
         try {
             if (isScreenSharing) {
-                mScreenAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, true);
+                mScreenAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), AppConfig.otConfig.getApiKey(), true);
                 //size of annotations screen, by default will be all the screen
                 //take into account the calltoolbar as well
                 mCallToolbar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -915,7 +911,7 @@ public class MainActivity extends AppCompatActivity implements ActionBarFragment
 
     private void remoteAnnotations() {
         try {
-            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), OpenTokConfig.API_KEY, mWrapper.getRemoteConnId(mScreenRemoteId));
+            mRemoteAnnotationsView = new AnnotationsView(this, mWrapper.getSession(), AppConfig.otConfig.getApiKey(), mWrapper.getRemoteConnId(mScreenRemoteId));
             mRemoteAnnotationsView.setVideoRenderer(mRemoteRenderer);
             mRemoteAnnotationsView.attachToolbar(mAnnotationsToolbar);
             mRemoteAnnotationsView.setAnnotationsListener(this);

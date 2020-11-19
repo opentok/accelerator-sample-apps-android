@@ -8,9 +8,9 @@ class AppConfig {
     // https://tokbox.com/account
 
     static final OTConfig otConfig = new OTConfig(
-            "", // Replace with session Id from the dashboard
-            "", // Replace with a generated token from the dashboard or using an OpenTok server SDK
-            "", // Replace with your OpenTok API key from the dashboard
+            "", // Replace with API key from the dashboard
+            "", // Replace with a session id from the dashboard (or an OpenTok server SDK)
+            "", // Replace with token from the dashboard (or an OpenTok server SDK)
             "accelerator-sample-app",
             false,
             true

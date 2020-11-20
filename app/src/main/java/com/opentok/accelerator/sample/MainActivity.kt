@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     //ScreenSharing
     private lateinit var screenSharingContainer: RelativeLayout
-    private lateinit var screenAnnotationsView: AnnotationsView
+    private var screenAnnotationsView: AnnotationsView? = null
     private lateinit var screenSharingView: ViewGroup
     private lateinit var callToolbar: TextView
     private lateinit var webViewContainer: WebView
@@ -474,7 +474,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onPreviewViewDestroyed(otWrapper: OTWrapper?, localView: View) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
-            removeParticipant(Participant.Type.LOCAL, null)
+
+            // ToDo: Merge removeParticipant?
+            participantsList.removeAll { it.type == Participant.Type.LOCAL }
+            //ToDo: why we are reversing?
+            participantsList.reverse()
+            participantsAdapter.notifyDataSetChanged()
         }
 
         @Throws(ListenerException::class)
@@ -502,7 +507,10 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 screenRemoteId = null
                 removeRemoteScreenSharing()
             } else {
-                removeParticipant(Participant.Type.REMOTE, remoteId)
+                participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId}
+                //ToDo: why we are reversing?
+                participantsList.reverse()
+                participantsAdapter.notifyDataSetChanged()
             }
         }
 
@@ -819,7 +827,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         remoteAnnotationsView = null
         mCurrentRemote = null
         screenSharingContainer.visibility = View.GONE
-        screenAnnotationsView.removeAllViews()
+        screenAnnotationsView?.removeAllViews()
         isCallInProgress = false
         isReadyToCall = false
         isRemoteAnnotations = false
@@ -857,10 +865,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                         0
                     ).measuredHeight
                 val width = window.decorView.rootView.width
-                screenAnnotationsView.layoutParams = ViewGroup.LayoutParams(width, height)
-                screenAnnotationsView.attachToolbar(annotationsToolbar)
-                screenAnnotationsView.videoRenderer = screenSharingRenderer
-                screenAnnotationsView.setAnnotationsListener(this)
+
+                screenAnnotationsView?.layoutParams = ViewGroup.LayoutParams(width, height)
+                screenAnnotationsView?.attachToolbar(annotationsToolbar)
+                screenAnnotationsView?.videoRenderer = screenSharingRenderer
+                screenAnnotationsView?.setAnnotationsListener(this)
+
                 screenSharingView.addView(screenAnnotationsView)
                 actionBarFragment.enableAnnotations(true)
                 showScreenSharingBar(true)
@@ -943,27 +953,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
     }
 
-    private fun removeParticipant(type: Participant.Type, id: String?) {
-        for (i in participantsList.indices) {
-            val participant = participantsList[i]
-            if (participant.type == type) {
-                if (type == Participant.Type.REMOTE) {
-                    //remote participant
-                    if (participant.id == id) {
-                        participantsList.removeAt(i)
-                    }
-                } else {
-                    //local participant
-                    participantsList.removeAt(i)
-                }
-            }
-        }
-        //update list
-        updateParticipantList()
-        participantsList.reverse()
-        participantsAdapter.notifyDataSetChanged()
-    }
-
     private fun updateParticipantList() {
         //update list
         for (i in participantsList.indices) {
@@ -979,6 +968,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
             participantsList[i] = participant
         }
+
+        //ToDo: why we are reversing?
         participantsList.reverse()
         participantsAdapter.notifyDataSetChanged()
     }
@@ -988,7 +979,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             val participant = participantsList[i]
             if (participant.type == type) {
                 if (type == Participant.Type.REMOTE) {
-                    if (participant.id == id) {
+                    if (participant.remoteId == id) {
                         participant.status.setHas(MediaType.VIDEO, audioOnly)
                         participantsList[i] = participant
                     }

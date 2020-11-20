@@ -9,7 +9,7 @@ class Participant {
     }
 
     var type: Type
-    var id: String? = null
+    var remoteId: String? = null
     var status: StreamStatus
     var containerSize: Size
 
@@ -17,6 +17,6 @@ class Participant {
         this.type = type
         this.status = status
         this.containerSize = containerSize
-        this.id = id
+        this.remoteId = id
     }
 }

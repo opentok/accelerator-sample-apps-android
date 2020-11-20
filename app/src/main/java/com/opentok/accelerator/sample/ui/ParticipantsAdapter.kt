@@ -38,7 +38,7 @@ class ParticipantsAdapter(
         val participant = participantsList[position]
 
         holder.container.removeAllViews()
-        holder.id = participant.id
+        holder.id = participant.remoteId
         holder.type = participant.type
         holder.listener = participantAdapterListener
 

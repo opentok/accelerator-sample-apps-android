@@ -473,7 +473,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
 
         @Throws(ListenerException::class)
-        override fun onPreviewViewDestroyed(otWrapper: OTWrapper?, localView: View) {
+        override fun onPreviewViewDestroyed(otWrapper: OTWrapper?) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
 
             // ToDo: Merge removeParticipant?
@@ -503,7 +503,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
 
         @Throws(ListenerException::class)
-        override fun onRemoteViewDestroyed(otWrapper: OTWrapper?, remoteView: View, remoteId: String) {
+        override fun onRemoteViewDestroyed(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "Remote view is destroyed")
 
             if (remoteId == screenRemoteId) {

@@ -457,6 +457,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onPreviewViewReady(otWrapper: OTWrapper?, localView: View) {
             Log.i(LOG_TAG, "Local preview view is ready")
+
             if (isScreenSharing) {
                 //Share local web view
                 screenSharingView = localView as ViewGroup //ToDo: Is this always ViewGroup? Update lisener definition
@@ -485,6 +486,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onRemoteViewReady(otWrapper: OTWrapper?, remoteView: View, remoteId: String, data: String) {
             Log.i(LOG_TAG, "Participant remote view is ready")
+
             if (this@MainActivity.otWrapper.getRemoteStreamStatus(remoteId).type == StreamStatus.StreamType.SCREEN) {
                 Log.i(LOG_TAG, "Participant is sharing the screen")
                 screenRemoteId = remoteId
@@ -503,6 +505,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onRemoteViewDestroyed(otWrapper: OTWrapper?, remoteView: View, remoteId: String) {
             Log.i(LOG_TAG, "Remote view is destroyed")
+
             if (remoteId == screenRemoteId) {
                 screenRemoteId = null
                 removeRemoteScreenSharing()
@@ -517,6 +520,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onStartedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local started streaming video.")
+
             if (screenSharing) {
                 screenAnnotations()
             }
@@ -526,6 +530,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onStoppedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local stopped streaming video.")
+
             actionBarFragment.setCallButtonEnabled(true)
             isCallInProgress = false
         }
@@ -533,11 +538,13 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onRemoteJoined(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote joined.")
+
         }
 
         @Throws(ListenerException::class)
         override fun onRemoteLeft(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote left.")
+
         }
 
         @Throws(ListenerException::class)
@@ -549,6 +556,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             subscribed: Boolean
         ) {
             Log.i(LOG_TAG, "Remote video changed")
+
             if (isCallInProgress) {
                 if (reason == "quality") {
                     //network quality alert

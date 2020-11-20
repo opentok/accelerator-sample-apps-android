@@ -59,6 +59,7 @@ class ActionBarFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
+        otWrapper = mainActivity.otWrapper
         previewControlCallbacks = context
     }
 

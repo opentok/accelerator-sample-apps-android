@@ -67,7 +67,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.Collections
 import java.util.Date
 
 // Remove these listeners and use Kotlin functions
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     //OpenTok calls
-    lateinit var wrapper: OTWrapper
+    lateinit var otWrapper: OTWrapper
         private set
 
     //Participants Grid management
@@ -159,10 +158,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private var mCurrentRemote: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_ACTION_BAR)
+
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         participantsGrid = findViewById<View>(R.id.grid_container) as RecyclerView
@@ -202,18 +203,18 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             writeExternalStoragePermission = true
             readExternalStoragePermission = true
         }
-        wrapper = OTWrapper(this@MainActivity, otConfig)
+        otWrapper = OTWrapper(this@MainActivity, otConfig)
 
         //set listener to receive the communication events, and add UI to these events
-        wrapper.addBasicListener(mBasicListener)
-        wrapper.addAdvancedListener(mAdvancedListener)
+        otWrapper.addBasicListener(mBasicListener)
+        otWrapper.addAdvancedListener(mAdvancedListener)
         //use a custom video renderer for the annotations. It will be applied to the remote. It will be applied before to start subscribing
         remoteRenderer = AnnotationsVideoRenderer(this)
         screenSharingRenderer = AnnotationsVideoRenderer(this)
-        wrapper.setRemoteVideoRenderer(remoteRenderer, true)
+        otWrapper.setRemoteVideoRenderer(remoteRenderer, true)
 
         //connect
-        wrapper.connect()
+        otWrapper.connect()
 
         //show connections dialog
         progressDialog = ProgressDialog(this)
@@ -239,12 +240,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     override fun onPause() {
         super.onPause()
-        wrapper.pause()
+        otWrapper.pause()
     }
 
     override fun onResume() {
         super.onResume()
-        wrapper.resume(true)
+        otWrapper.resume(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -293,16 +294,16 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             //start avcall
             isCallInProgress = true
             showAVCall(true)
-            wrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false) //restart av call
+            otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false) //restart av call
             webViewContainer.visibility = View.GONE
             actionBarFragment.showAnnotations(false)
         } else {
             isScreenSharing = true
             showAVCall(false)
-            wrapper.stopPublishingMedia(false) //stop call
+            otWrapper.stopPublishingMedia(false) //stop call
             isCallInProgress = false
             val builder = PreviewConfigBuilder().name("TokboxerScreen").renderer(screenSharingRenderer)
-            wrapper.startPublishingMedia(builder.build(), true) //start screen sharing
+            otWrapper.startPublishingMedia(builder.build(), true) //start screen sharing
             webViewContainer.visibility = View.VISIBLE
             actionBarFragment.showAnnotations(true)
         }
@@ -358,13 +359,13 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     //Video local button event
     override fun onDisableLocalVideo(video: Boolean) {
         Log.i(LOG_TAG, "Disable/Enable local video")
-        wrapper.enableLocalMedia(MediaType.VIDEO, video)
+        otWrapper.enableLocalMedia(MediaType.VIDEO, video)
         updateParticipant(Participant.Type.LOCAL, null, video)
     }
 
     override fun onDisableLocalAudio(audio: Boolean) {
         Log.i(LOG_TAG, "Disable/Enable local audio_icon")
-        wrapper.enableLocalMedia(MediaType.AUDIO, audio)
+        otWrapper.enableLocalMedia(MediaType.AUDIO, audio)
     }
 
     //Call button event
@@ -374,22 +375,22 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         if (isConnected) {
             if (!isCallInProgress && !isScreenSharing) {
                 isCallInProgress = true
-                wrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false)
+                otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false)
                 actionBarFragment.setEnabled(true)
             } else {
                 if (isScreenSharing) {
                     stopScreenSharing()
                     showAVCall(true)
                 } else {
-                    wrapper.stopPublishingMedia(false)
-                    wrapper.disconnect()
+                    otWrapper.stopPublishingMedia(false)
+                    otWrapper.disconnect()
                     isCallInProgress = false
                 }
                 cleanViewsAndControls()
             }
         } else {
             isReadyToCall = true
-            wrapper.connect()
+            otWrapper.connect()
         }
     }
 
@@ -424,10 +425,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onConnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
             Log.i(LOG_TAG, "Connected to the session. Number of participants: $participantsCount, connId: $connId")
-            if (wrapper.ownConnId == connId) {
+            if (this@MainActivity.otWrapper.ownConnId == connId) {
                 isConnected = true
                 progressDialog.dismiss()
-                //TextchatFragment requires a session. In the current accelerator, the session is connected in the app and then,
+                //TextChatFragment requires a session. In the current accelerator, the session is connected in the
+                // app and then,
                 // the accelerator is initialized.
                 if (textChatFragment != null) {
                     textChatFragment.init()
@@ -445,7 +447,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 LOG_TAG,
                 "Connection dropped: Number of participants: $participantsCount, connId: $connId"
             )
-            if (connId == wrapper.ownConnId) {
+            if (connId == this@MainActivity.otWrapper.ownConnId) {
                 Log.i(LOG_TAG, "Disconnected to the session")
                 cleanViewsAndControls()
                 isConnected = false
@@ -464,7 +466,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 webViewContainer.loadUrl("https://www.tokbox.com")
             } else {
                 //audio/video call view
-                val participant = Participant(Participant.Type.LOCAL, wrapper.localStreamStatus, participantSize)
+                val participant = Participant(Participant.Type.LOCAL, this@MainActivity.otWrapper.localStreamStatus, participantSize)
                 addNewParticipant(participant)
             }
         }
@@ -478,14 +480,14 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onRemoteViewReady(otWrapper: OTWrapper?, remoteView: View, remoteId: String, data: String) {
             Log.i(LOG_TAG, "Participant remote view is ready")
-            if (wrapper.getRemoteStreamStatus(remoteId).type == StreamStatus.StreamType.SCREEN) {
+            if (this@MainActivity.otWrapper.getRemoteStreamStatus(remoteId).type == StreamStatus.StreamType.SCREEN) {
                 Log.i(LOG_TAG, "Participant is sharing the screen")
                 screenRemoteId = remoteId
                 addRemoteScreenSharing(remoteId, remoteView)
             } else {
                 val newParticipant = Participant(
                     Participant.Type.REMOTE,
-                    wrapper.getRemoteStreamStatus(remoteId),
+                    this@MainActivity.otWrapper.getRemoteStreamStatus(remoteId),
                     participantSize,
                     remoteId
                 )
@@ -556,7 +558,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
             Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
             Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
-            wrapper.disconnect()
+            this@MainActivity.otWrapper.disconnect()
             progressDialog.dismiss()
             cleanViewsAndControls() //restart views
             actionBarFragment.setCallButtonEnabled(false)
@@ -627,7 +629,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
                 Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
                 Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
-                wrapper.disconnect() //end communication
+                this@MainActivity.otWrapper.disconnect() //end communication
                 progressDialog.dismiss()
                 cleanViewsAndControls() //restart views
             }
@@ -643,7 +645,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
         //hide annotations
         showAnnotationsToolbar(false)
-        wrapper.stopPublishingMedia(true)
+        otWrapper.stopPublishingMedia(true)
     }
 
     private fun saveScreenCapture(bmp: Bitmap?) {
@@ -792,7 +794,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun initTextChatFragment() {
-        textChatFragment = TextChatFragment.newInstance(wrapper.session, otConfig.apiKey)
+        textChatFragment = TextChatFragment.newInstance(otWrapper.session, otConfig.apiKey)
         supportFragmentManager.beginTransaction()
             .add(R.id.textchat_fragment_container, textChatFragment).commit()
         supportFragmentManager.executePendingTransactions()
@@ -841,7 +843,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun screenAnnotations() {
         try {
             if (isScreenSharing) {
-                screenAnnotationsView = AnnotationsView(this, wrapper.session, otConfig.apiKey, true)
+                screenAnnotationsView = AnnotationsView(this, otWrapper.session, otConfig.apiKey, true)
                 //size of annotations screen, by default will be all the screen
                 //take into account the call toolbar as well
                 callToolbar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
@@ -871,8 +873,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun remoteAnnotations() {
         try {
             remoteAnnotationsView = AnnotationsView(
-                this, wrapper.session, otConfig.apiKey,
-                wrapper.getRemoteConnId(screenRemoteId)
+                this, otWrapper.session, otConfig.apiKey,
+                otWrapper.getRemoteConnId(screenRemoteId)
             )
             remoteAnnotationsView?.videoRenderer = remoteRenderer
             remoteAnnotationsView?.attachToolbar(annotationsToolbar)
@@ -916,7 +918,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun addRemoteScreenSharing(remoteId: String, screenView: View) {
-        if (wrapper.getRemoteStreamStatus(remoteId).width > wrapper.getRemoteStreamStatus(remoteId).height) {
+        if (otWrapper.getRemoteStreamStatus(remoteId).width > otWrapper.getRemoteStreamStatus(remoteId).height) {
             forceLandscape()
         }
         showAVCall(false)
@@ -958,7 +960,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
         //update list
         updateParticipantList()
-        Collections.reverse(participantsList)
+        participantsList.reverse()
         participantsAdapter.notifyDataSetChanged()
     }
 
@@ -977,7 +979,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
             participantsList[i] = participant
         }
-        Collections.reverse(participantsList)
+        participantsList.reverse()
         participantsAdapter.notifyDataSetChanged()
     }
 
@@ -1058,23 +1060,23 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     fun onRemoteVideoChanged(v: View) {
-        if (wrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.VIDEO)) {
-            wrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, false)
+        if (otWrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.VIDEO)) {
+            otWrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, false)
             (v as ImageButton).setImageResource(R.drawable.no_video_icon)
             updateParticipant(Participant.Type.REMOTE, mCurrentRemote, true)
         } else {
-            wrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, true)
+            otWrapper.enableReceivedMedia(mCurrentRemote, MediaType.VIDEO, true)
             (v as ImageButton).setImageResource(R.drawable.video_icon)
             updateParticipant(Participant.Type.REMOTE, mCurrentRemote, false)
         }
     }
 
     fun onRemoteAudioChanged(v: View) {
-        if (wrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.AUDIO)) {
-            wrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, false)
+        if (otWrapper.getRemoteStreamStatus(mCurrentRemote).subscribedTo(MediaType.AUDIO)) {
+            otWrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, false)
             (v as ImageButton).setImageResource(R.drawable.no_audio_icon)
         } else {
-            wrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, true)
+            otWrapper.enableReceivedMedia(mCurrentRemote, MediaType.AUDIO, true)
             (v as ImageButton).setImageResource(R.drawable.audio_icon)
         }
     }

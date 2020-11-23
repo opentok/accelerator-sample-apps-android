@@ -22,7 +22,6 @@ class ScreenSharingBar @JvmOverloads constructor(
     private var onCloseListener: (() -> Unit)? = null
     
     init {
-        //ToDo: Change to layout
         setBackgroundColor(ContextCompat.getColor(context, R.color.screen_sharing_bar))
 
         closeButton = ImageButton(context)

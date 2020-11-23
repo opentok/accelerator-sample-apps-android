@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.graphics.Point
 import android.os.Build
@@ -51,6 +50,7 @@ import com.opentok.accelerator.core.utils.PreviewConfig.PreviewConfigBuilder
 import com.opentok.accelerator.core.utils.StreamStatus
 import com.opentok.accelerator.core.wrapper.OTWrapper
 import com.opentok.accelerator.sample.AppConfig.otConfig
+import com.opentok.accelerator.sample.extension.getBitmap
 import com.opentok.accelerator.sample.extension.hide
 import com.opentok.accelerator.sample.extension.merge
 import com.opentok.accelerator.sample.extension.show
@@ -123,34 +123,22 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private var screenRemoteId: String? = null
     private var countDownTimer: CountDownTimer? = null
 
-    //Permissions
-    // ToDo: Use Easy permissions?
     private var audioPermission = false
     private var videoPermission = false
-
-    //ToDo: do we need this? Changed in Android 10
     private var writeExternalStoragePermission = false
     private var readExternalStoragePermission = false
 
-    //status
-    //ToDo: Move to OTWrapper
     private var isConnected = false
 
-    //ToDo: Move to OTWrapper
     var isCallInProgress = false
         private set
 
-    //ToDo: Move to OTWrapper ?
     private var isRemoteAnnotations = false
 
-    //ToDo: Move to OTWrapper
     var isScreenSharing = false
         private set
 
-    //ToDo: Move to OTWrapper ?
     private var isAnnotations = false
-
-    //ToDo: Move to OTWrapper ?
     private var isReadyToCall = false
 
     //Current orientation
@@ -168,7 +156,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         setupMultipartyLayout()
         participantsGrid.layoutManager = gridLayoutManager
         try {
-            //ToDo: covert listener to kotlin function
             participantsAdapter = ParticipantsAdapter(this, participantsList, this)
             participantsGrid.adapter = participantsAdapter
         } catch (e: Exception) {
@@ -466,10 +453,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onPreviewViewDestroyed(otWrapper: OTWrapper?) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
-
-            // ToDo: Merge removeParticipant?
             participantsList.removeAll { it.type == Participant.Type.LOCAL }
-            //ToDo: why we are reversing?
             participantsList.reverse()
             participantsAdapter.notifyDataSetChanged()
         }
@@ -502,7 +486,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 removeRemoteScreenSharing()
             } else {
                 participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId }
-                //ToDo: why we are reversing?
                 participantsList.reverse()
                 participantsAdapter.notifyDataSetChanged()
             }
@@ -656,13 +639,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun saveScreenCapture(bitmap: Bitmap?) {
         bitmap ?: return
 
-        val localRemoteAnnotationsView = remoteAnnotationsView
-
-        val annotationsBmp = if (localRemoteAnnotationsView != null) {
-            getBitmapFromView(localRemoteAnnotationsView)
-        } else {
-            null
-        }
+        val annotationsBmp = remoteAnnotationsView?.getBitmap()
 
         try {
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -691,16 +668,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    // ToDo: Convert to Kotlin extension
-    private fun getBitmapFromView(view: View): Bitmap {
-        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(returnedBitmap)
-        val bgDrawable = view.background
-        bgDrawable?.draw(canvas)
-        view.draw(canvas)
-        return returnedBitmap
     }
 
     private fun showAnnotationsToolbar(show: Boolean) {
@@ -945,7 +912,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             participantsList[i] = participant
         }
 
-        //ToDo: why we are reversing?
         participantsList.reverse()
         participantsAdapter.notifyDataSetChanged()
     }

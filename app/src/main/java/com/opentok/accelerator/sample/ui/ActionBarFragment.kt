@@ -18,9 +18,8 @@ import com.opentok.accelerator.sample.R
 import com.opentok.accelerator.sample.extension.hide
 import com.opentok.accelerator.sample.extension.show
 
-//ToDo: Do we need this fragment for the view, do all in MainActivity?
+//
 class ActionBarFragment : Fragment() {
-    //ToDo: Main Activity is only used to access some properties - they should be in the OTWrapper?
     private lateinit var mainActivity: MainActivity
     private lateinit var otWrapper: OTWrapper
     private lateinit var audioButton: ImageButton
@@ -37,7 +36,7 @@ class ActionBarFragment : Fragment() {
 
     private var previewControlCallbacks: PreviewControlCallbacks? = null
 
-    //ToDo: rename?
+
     interface PreviewControlCallbacks {
         fun onDisableLocalAudio(audio: Boolean)
         fun onDisableLocalVideo(video: Boolean)
@@ -66,7 +65,6 @@ class ActionBarFragment : Fragment() {
     }
 
     override fun onAttach(activity: Activity) {
-        //ToDo: Deprecated
         super.onAttach(activity)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             mainActivity = activity as MainActivity
@@ -84,8 +82,6 @@ class ActionBarFragment : Fragment() {
         annotationsButton = rootView.findViewById(R.id.annotations) as ImageButton
         textChatButton = rootView.findViewById(R.id.textChat) as ImageButton
         unreadMessagesButton = rootView.findViewById(R.id.unread_messages) as ImageButton
-
-        //ToDo: instead of getting drawables, maybe you should get separate buttons
         drawableStartCall = VectorDrawableCompat.create(resources, R.drawable.initiate_call_button, null)
         drawableEndCall = VectorDrawableCompat.create(resources, R.drawable.end_call_button, null)
         drawableBckButton = VectorDrawableCompat.create(resources, R.drawable.background_icon, null)

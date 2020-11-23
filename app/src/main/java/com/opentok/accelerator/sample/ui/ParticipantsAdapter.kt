@@ -15,17 +15,9 @@ import com.opentok.accelerator.sample.ui.ParticipantsAdapter.ParticipantViewHold
 
 class ParticipantsAdapter(
     private val context: Context,
-    participantsList: List<Participant>,
-    listener: ParticipantAdapterListener
-) : RecyclerView.Adapter<ParticipantViewHolder>() {
-
-    private var participantsList = listOf<Participant>()
+    private val participantsList: List<Participant>,
     private val participantAdapterListener: ParticipantAdapterListener
-
-    init {
-        this.participantsList = participantsList
-        participantAdapterListener = listener
-    }
+) : RecyclerView.Adapter<ParticipantViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParticipantViewHolder {
         val view = LayoutInflater.from(context).inflate(viewType, parent, false)

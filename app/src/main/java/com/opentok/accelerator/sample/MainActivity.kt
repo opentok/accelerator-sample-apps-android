@@ -282,7 +282,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             //start avcall
             isCallInProgress = true
             showAVCall(true)
-            otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false) //restart av call
+            otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Vonage").build(), false) //restart av call
             webViewContainer.hide()
             actionBarFragment.showAnnotations(false)
         } else {
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         if (isConnected) {
             if (!isCallInProgress && !isScreenSharing) {
                 isCallInProgress = true
-                otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false)
+                otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Vonage").build(), false)
                 actionBarFragment.setEnabled(true)
             } else {
                 if (isScreenSharing) {
@@ -802,7 +802,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             .add(R.id.textchat_fragment_container, textChatFragment).commit()
         supportFragmentManager.executePendingTransactions()
         try {
-            textChatFragment.senderAlias = "Tokboxer"
+            textChatFragment.senderAlias = "Vonage"
             textChatFragment.maxTextLength = 140
         } catch (e: Exception) {
             e.printStackTrace()

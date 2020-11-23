@@ -136,7 +136,7 @@ This class uses the OpenTok API to initiate the client connection to the OpenTok
   mWrapper.connect();
   
   mWrapper.startPublishingMedia(new PreviewConfig.PreviewConfigBuilder().
-                        name("Tokboxer").build(), false);
+                        name("Vonage").build(), false);
 
   mWrapper.enableLocalMedia(MediaType.AUDIO, audio);
   

@@ -19,7 +19,7 @@
                 android:layout_centerInParent="true"/>
 
         <TextView
-                android:id="@+id/quality_warning"
+                android:id="@+id/qualityWarning"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/alert_bar_height"
                 android:background="@color/quality_warning"
@@ -39,13 +39,13 @@
             android:visibility="gone" />
 
         <RelativeLayout
-                android:id="@+id/screen_sharing_container"
+                android:id="@+id/screenSharingContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/grid_container"
+            android:id="@+id/gridContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -58,14 +58,14 @@
                 android:visibility="visible" />
 
         <com.opentok.accelerator.annotation.AnnotationsToolbar
-            android:id="@+id/annotations_bar"
+            android:id="@+id/annotationsBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/actionbar_fragment_container"
             android:visibility="gone" />
 
         <TextView
-                android:id="@+id/call_toolbar"
+                android:id="@+id/callToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
@@ -77,7 +77,7 @@
                 android:visibility="gone" />
 
         <FrameLayout
-                android:id="@+id/text_chat_fragment_container"
+                android:id="@+id/textChatFragmentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/actionbar_fragment_container"

@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        participantsGrid = findViewById(R.id.grid_container)
+        participantsGrid = findViewById(R.id.gridContainer)
         gridLayoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
         setupMultipartyLayout()
         participantsGrid.layoutManager = gridLayoutManager
@@ -175,15 +175,15 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             e.printStackTrace()
         }
         webViewContainer = findViewById(R.id.webView)
-        alert = findViewById(R.id.quality_warning)
-        screenSharingContainer = findViewById(R.id.screen_sharing_container)
+        alert = findViewById(R.id.qualityWarning)
+        screenSharingContainer = findViewById(R.id.screenSharingContainer)
         actionBarContainer = findViewById(R.id.actionbar_fragment_container)
-        textChatContainer = findViewById(R.id.text_chat_fragment_container)
-        annotationsToolbar = findViewById(R.id.annotations_bar)
-        callToolbar = findViewById(R.id.call_toolbar)
+        textChatContainer = findViewById(R.id.textChatFragmentContainer)
+        annotationsToolbar = findViewById(R.id.annotationsBar)
+        callToolbar = findViewById(R.id.callToolbar)
         progressBar = findViewById(R.id.progressBar)
 
-        findViewById<TextView>(R.id.call_toolbar).setOnClickListener {
+        findViewById<TextView>(R.id.callToolbar).setOnClickListener {
             showAll()
         }
 
@@ -780,7 +780,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun initTextChatFragment() {
         textChatFragment = TextChatFragment.newInstance(otWrapper.session, otConfig.apiKey)
         supportFragmentManager.beginTransaction()
-            .add(R.id.text_chat_fragment_container, textChatFragment).commit()
+            .add(R.id.textChatFragmentContainer, textChatFragment).commit()
         supportFragmentManager.executePendingTransactions()
         try {
             textChatFragment.senderAlias = "Vonage"

@@ -15,6 +15,8 @@ import com.opentok.accelerator.core.utils.MediaType
 import com.opentok.accelerator.core.wrapper.OTWrapper
 import com.opentok.accelerator.sample.MainActivity
 import com.opentok.accelerator.sample.R
+import com.opentok.accelerator.sample.extension.hide
+import com.opentok.accelerator.sample.extension.show
 
 //ToDo: Do we need this fragment for the view, do all in MainActivity?
 class ActionBarFragment : Fragment() {
@@ -159,9 +161,9 @@ class ActionBarFragment : Fragment() {
     fun unreadMessages(unread: Boolean) {
         activity?.runOnUiThread {
             if (unread) {
-                unreadMessagesButton.visibility = View.VISIBLE
+                unreadMessagesButton.show()
             } else {
-                unreadMessagesButton.visibility = View.GONE
+                unreadMessagesButton.hide()
             }
         }
     }
@@ -212,12 +214,12 @@ class ActionBarFragment : Fragment() {
         val params = screenSharingButton.layoutParams as RelativeLayout.LayoutParams
 
         if (show) {
-            textChatButton.visibility = View.GONE
-            annotationsButton.visibility = View.VISIBLE
+            textChatButton.hide()
+            annotationsButton.show()
             params.addRule(RelativeLayout.RIGHT_OF, annotationsButton.id)
         } else {
-            annotationsButton.visibility = View.GONE
-            textChatButton.visibility = View.VISIBLE
+            annotationsButton.hide()
+            textChatButton.show()
             params.addRule(RelativeLayout.RIGHT_OF, textChatButton.id)
         }
         screenSharingButton.layoutParams = params

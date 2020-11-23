@@ -9,6 +9,8 @@ import android.widget.TableRow
 import androidx.recyclerview.widget.RecyclerView
 import com.opentok.accelerator.core.utils.MediaType
 import com.opentok.accelerator.sample.R
+import com.opentok.accelerator.sample.extension.hide
+import com.opentok.accelerator.sample.extension.show
 import com.opentok.accelerator.sample.ui.ParticipantsAdapter.ParticipantViewHolder
 
 class ParticipantsAdapter(
@@ -49,10 +51,10 @@ class ParticipantsAdapter(
             || participant.type == Participant.Type.REMOTE
             && !participant.status.subscribedTo(MediaType.VIDEO)
         ) {
-            holder.audiOnlyView.visibility = View.VISIBLE
+            holder.audiOnlyView.show()
             holder.container.addView(holder.audiOnlyView, params)
         } else {
-            holder.audiOnlyView.visibility = View.GONE
+            holder.audiOnlyView.hide()
             if (participant.status.view != null) {
                 val parent = participant.status.view.parent as ViewGroup?
                 parent?.removeView(participant.status.view)
@@ -82,10 +84,10 @@ class ParticipantsAdapter(
                 if (type == Participant.Type.REMOTE) {
                     container.removeView(controls)
                     if (controls.visibility == View.GONE) {
-                        controls.visibility = View.VISIBLE
+                        controls.show()
                         container.addView(controls)
                     } else {
-                        controls.visibility = View.GONE
+                        controls.hide()
                     }
                     listener?.mediaControlChanged(id)
                 }

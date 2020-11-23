@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             isCallInProgress = true
             showAVCall(true)
             otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Tokboxer").build(), false) //restart av call
-            webViewContainer.visibility = View.GONE
+            webViewContainer.hide()
             actionBarFragment.showAnnotations(false)
         } else {
             isScreenSharing = true
@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             isCallInProgress = false
             val builder = PreviewConfigBuilder().name("VonageScreen").renderer(screenSharingRenderer)
             otWrapper.startPublishingMedia(builder.build(), true) //start screen sharing
-            webViewContainer.visibility = View.VISIBLE
+            webViewContainer.show()
             actionBarFragment.showAnnotations(true)
         }
     }
@@ -307,11 +307,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     override fun onTextChat() {
         if (textChatContainer.visibility == View.VISIBLE) {
-            textChatContainer.visibility = View.GONE
+            textChatContainer.hide()
             showAVCall(true)
         } else {
             showAVCall(false)
-            textChatContainer.visibility = View.VISIBLE
+            textChatContainer.show()
             actionBarFragment.unreadMessages(false)
         }
     }
@@ -334,7 +334,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     override fun onClosed() {
         Log.i(LOG_TAG, "OnClosed text-chat")
-        textChatContainer.visibility = View.GONE
+        textChatContainer.hide()
         showAVCall(true)
         actionBarFragment.unreadMessages(false)
         restartTextChatLayout(true)
@@ -392,11 +392,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         if (mode == AnnotationsView.Mode.Pen || mode == AnnotationsView.Mode.Text) {
             showAll()
             //show minimized call toolbar
-            callToolbar.visibility = View.VISIBLE
+            callToolbar.show()
             val params = annotationsToolbar.layoutParams as RelativeLayout.LayoutParams
             params.addRule(RelativeLayout.ABOVE, callToolbar.id)
             annotationsToolbar.layoutParams = params
-            annotationsToolbar.visibility = View.VISIBLE
+            annotationsToolbar.show()
         }
     }
 
@@ -550,8 +550,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                     alert.setBackgroundResource(R.color.quality_alert)
                     alert.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.white))
                     alert.bringToFront()
-                    alert.visibility = View.VISIBLE
-                    alert.postDelayed({ alert.visibility = View.GONE }, 7000)
+                    alert.show()
+                    alert.postDelayed({ alert.hide() }, 7000)
                 }
                 updateParticipant(Participant.Type.REMOTE, remoteId, videoActive)
             }
@@ -614,8 +614,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 alert.setBackgroundResource(R.color.quality_warning)
                 alert.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.warning_text))
                 alert.bringToFront()
-                alert.visibility = View.VISIBLE
-                alert.postDelayed({ alert.visibility = View.GONE }, 7000)
+                alert.show()
+                alert.postDelayed({ alert.hide() }, 7000)
             }
 
             @Throws(ListenerException::class)
@@ -728,34 +728,34 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             val params = annotationsToolbar.layoutParams as RelativeLayout.LayoutParams
             params.addRule(RelativeLayout.ABOVE, actionBarContainer.id)
             annotationsToolbar.layoutParams = params
-            annotationsToolbar.visibility = View.VISIBLE
-            actionBarContainer.visibility = View.VISIBLE
+            annotationsToolbar.show()
+            actionBarContainer.show()
         } else {
 
             if (countDownTimer != null) {
                 countDownTimer?.cancel()
                 countDownTimer = null
             }
-            callToolbar.visibility = View.GONE
-            annotationsToolbar.visibility = View.GONE
-            actionBarContainer.visibility = View.VISIBLE
+            callToolbar.hide()
+            annotationsToolbar.hide()
+            actionBarContainer.show()
             annotationsToolbar.restart()
         }
     }
 
     private fun showAll() {
-        callToolbar.visibility = View.GONE
+        callToolbar.hide()
         showAnnotationsToolbar(true)
         countDownTimer = object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 if (isAnnotations) {
-                    callToolbar.visibility = View.VISIBLE
+                    callToolbar.show()
                     val params = annotationsToolbar.layoutParams as RelativeLayout.LayoutParams
                     params.addRule(RelativeLayout.ABOVE, callToolbar.id)
                     annotationsToolbar.layoutParams = params
-                    annotationsToolbar.visibility = View.VISIBLE
-                    actionBarContainer.visibility = View.GONE
+                    annotationsToolbar.show()
+                    actionBarContainer.hide()
                 }
             }
         }.start()
@@ -816,12 +816,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         actionBarFragment.restart()
         restartTextChatLayout(true)
         textChatFragment.restart()
-        textChatContainer.visibility = View.GONE
+        textChatContainer.hide()
         actionBarContainer.background = null
-        webViewContainer.visibility = View.GONE
+        webViewContainer.hide()
         remoteAnnotationsView = null
         mCurrentRemote = null
-        screenSharingContainer.visibility = View.GONE
+        screenSharingContainer.hide()
         screenAnnotationsView?.removeAllViews()
         isCallInProgress = false
         isReadyToCall = false
@@ -833,11 +833,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     private fun showAVCall(show: Boolean) {
         if (show && screenRemoteId == null) {
-            participantsGrid.visibility = View.VISIBLE
-            screenSharingContainer.visibility = View.GONE
+            participantsGrid.show()
+            screenSharingContainer.hide()
             screenSharingContainer.removeAllViews()
         } else {
-            participantsGrid.visibility = View.GONE
+            participantsGrid.hide()
             participantsGrid.removeAllViews()
         }
         participantsAdapter.notifyDataSetChanged()
@@ -928,7 +928,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
         showAVCall(false)
         screenSharingContainer.removeAllViews()
-        screenSharingContainer.visibility = View.VISIBLE
+        screenSharingContainer.show()
         screenSharingContainer.addView(screenView)
         remoteAnnotations()
         isRemoteAnnotations = true

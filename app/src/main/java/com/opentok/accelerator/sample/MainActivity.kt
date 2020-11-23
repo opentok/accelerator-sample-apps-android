@@ -428,12 +428,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             if (this@MainActivity.otWrapper.ownConnId == connId) {
                 isConnected = true
                 progressDialog.dismiss()
+                //ToDO: github ticket
                 //TextChatFragment requires a session. In the current accelerator, the session is connected in the
                 // app and then,
                 // the accelerator is initialized.
-                if (textChatFragment != null) {
-                    textChatFragment.init()
-                }
+                textChatFragment.init()
             }
             if (isReadyToCall) {
                 isReadyToCall = false

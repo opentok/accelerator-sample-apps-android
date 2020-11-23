@@ -2,7 +2,6 @@ package com.opentok.accelerator.sample
 
 import android.Manifest
 import android.content.ContentValues
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -34,7 +33,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
@@ -62,6 +60,7 @@ import com.opentok.accelerator.sample.ui.Participant
 import com.opentok.accelerator.sample.ui.ParticipantsAdapter
 import com.opentok.accelerator.sample.ui.ParticipantsAdapter.ParticipantAdapterListener
 import com.opentok.accelerator.sample.ui.ScreenSharingBar
+import com.opentok.accelerator.sample.util.FileUtil
 import com.opentok.accelerator.textchat.ChatMessage
 import com.opentok.accelerator.textchat.TextChatFragment
 import com.opentok.accelerator.textchat.TextChatFragment.TextChatListener
@@ -689,7 +688,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 }
             }
 
-            shareScreenshot(file)
+            FileUtil.shareImage(this, file)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -703,23 +702,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         bgDrawable?.draw(canvas)
         view.draw(canvas)
         return returnedBitmap
-    }
-
-    private fun shareScreenshot(imageFile: File) {
-        // target API 24 requires FileProvider that have to be configured in the AndroidManifest.xm
-        val uri = FileProvider.getUriForFile(
-            this,
-            "com.opentok.accelerator.sample.provider",
-            imageFile
-        )
-
-        val intentSend = Intent()
-        intentSend.action = Intent.ACTION_SEND
-        intentSend.type = "image/*"
-        intentSend.putExtra(Intent.EXTRA_SUBJECT, "")
-        intentSend.putExtra(Intent.EXTRA_TEXT, "")
-        intentSend.putExtra(Intent.EXTRA_STREAM, uri)
-        startActivity(Intent.createChooser(intentSend, "Share Screenshot"))
     }
 
     private fun showAnnotationsToolbar(show: Boolean) {

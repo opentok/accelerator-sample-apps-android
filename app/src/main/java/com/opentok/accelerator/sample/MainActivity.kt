@@ -54,6 +54,7 @@ import com.opentok.accelerator.core.utils.StreamStatus
 import com.opentok.accelerator.core.wrapper.OTWrapper
 import com.opentok.accelerator.sample.AppConfig.otConfig
 import com.opentok.accelerator.sample.extension.hide
+import com.opentok.accelerator.sample.extension.merge
 import com.opentok.accelerator.sample.extension.show
 import com.opentok.accelerator.sample.ui.ActionBarFragment
 import com.opentok.accelerator.sample.ui.ActionBarFragment.PreviewControlCallbacks
@@ -654,8 +655,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         otWrapper.stopPublishingMedia(true)
     }
 
-    private fun saveScreenCapture(bmp: Bitmap?) {
-        bmp ?: return
+    private fun saveScreenCapture(bitmap: Bitmap?) {
+        bitmap ?: return
 
         val localRemoteAnnotationsView = remoteAnnotationsView
 
@@ -665,9 +666,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             null
         }
 
-        val overlayBmp: Bitmap = mergeBitmaps(bmp, annotationsBmp)
-
-
         try {
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
             val filename = "$timeStamp.jpg"
@@ -676,7 +674,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             val file = File(path, filename)
 
             outputStream = FileOutputStream(file)
-            overlayBmp.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+            val overlayBitmap = bitmap.merge(annotationsBmp)
+            overlayBitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
             outputStream.flush()
             outputStream.close()
 
@@ -706,21 +705,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         return returnedBitmap
     }
 
-    private fun mergeBitmaps(bmp1: Bitmap, bmp2: Bitmap?): Bitmap {
-        bmp2 ?: return bmp1
-
-        val bmpOverlay = Bitmap.createBitmap(bmp1.width, bmp1.height, bmp1.config)
-
-        val scaledBmp2 = Bitmap.createScaledBitmap(
-            bmp2, bmp1.width, bmp1.height,
-            true
-        )
-        val canvas = Canvas(bmpOverlay)
-        canvas.drawBitmap(bmp1, 0f, 0f, null)
-        canvas.drawBitmap(scaledBmp2, 0f, 0f, null)
-        return bmpOverlay
-    }
-
     private fun shareScreenshot(imageFile: File) {
         // target API 24 requires FileProvider that have to be configured in the AndroidManifest.xm
         val uri = FileProvider.getUriForFile(
@@ -728,7 +712,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             "com.opentok.accelerator.sample.provider",
             imageFile
         )
-
 
         val intentSend = Intent()
         intentSend.action = Intent.ACTION_SEND

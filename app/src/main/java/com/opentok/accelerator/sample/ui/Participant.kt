@@ -3,20 +3,10 @@ package com.opentok.accelerator.sample.ui
 import android.util.Size
 import com.opentok.accelerator.core.utils.StreamStatus
 
-class Participant {
+class Participant(var type: Type, var status: StreamStatus, var containerSize: Size, id: String? = null) {
     enum class Type {
         LOCAL, REMOTE
     }
 
-    var type: Type
-    var remoteId: String? = null
-    var status: StreamStatus
-    var containerSize: Size
-
-    constructor(type: Type, status: StreamStatus, containerSize: Size, id: String? = null) {
-        this.type = type
-        this.status = status
-        this.containerSize = containerSize
-        this.remoteId = id
-    }
+    var remoteId: String? = id
 }

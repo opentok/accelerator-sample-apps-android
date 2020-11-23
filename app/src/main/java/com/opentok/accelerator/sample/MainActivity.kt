@@ -161,11 +161,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_ACTION_BAR)
 
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         participantsGrid = findViewById<View>(R.id.grid_container) as RecyclerView

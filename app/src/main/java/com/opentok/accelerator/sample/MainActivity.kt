@@ -1,7 +1,6 @@
 package com.opentok.accelerator.sample
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -29,6 +28,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -53,6 +53,8 @@ import com.opentok.accelerator.core.utils.PreviewConfig.PreviewConfigBuilder
 import com.opentok.accelerator.core.utils.StreamStatus
 import com.opentok.accelerator.core.wrapper.OTWrapper
 import com.opentok.accelerator.sample.AppConfig.otConfig
+import com.opentok.accelerator.sample.extension.hide
+import com.opentok.accelerator.sample.extension.show
 import com.opentok.accelerator.sample.ui.ActionBarFragment
 import com.opentok.accelerator.sample.ui.ActionBarFragment.PreviewControlCallbacks
 import com.opentok.accelerator.sample.ui.Participant
@@ -116,7 +118,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private lateinit var callToolbar: TextView
     private lateinit var webViewContainer: WebView
     private lateinit var alert: TextView
-    private lateinit var progressDialog: ProgressDialog
+    private lateinit var progressBar: ProgressBar
     private var screenSharingBar: ScreenSharingBar? = null
     private var screenRemoteId: String? = null
     private var countDownTimer: CountDownTimer? = null
@@ -184,6 +186,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         textChatContainer = findViewById<View>(R.id.textchat_fragment_container) as FrameLayout
         annotationsToolbar = findViewById<View>(R.id.annotations_bar) as AnnotationsToolbar
         callToolbar = findViewById<View>(R.id.call_toolbar) as TextView
+        progressBar = findViewById<View>(R.id.progressBar) as ProgressBar
 
         //request runtime camera permission
         if (ContextCompat.checkSelfPermission(
@@ -215,12 +218,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
         //connect
         otWrapper.connect()
-
-        //show connections dialog
-        progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Please wait")
-        progressDialog.setMessage("Connecting...")
-        progressDialog.show()
+        progressBar.show()
 
         //init controls fragments
         if (savedInstanceState == null) {
@@ -427,7 +425,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             Log.i(LOG_TAG, "Connected to the session. Number of participants: $participantsCount, connId: $connId")
             if (this@MainActivity.otWrapper.ownConnId == connId) {
                 isConnected = true
-                progressDialog.dismiss()
+                progressBar.hide()
                 //ToDO: github ticket
                 //TextChatFragment requires a session. In the current accelerator, the session is connected in the
                 // app and then,
@@ -574,7 +572,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
             Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
             this@MainActivity.otWrapper.disconnect()
-            progressDialog.dismiss()
+            progressBar.hide()
             cleanViewsAndControls() //restart views
             actionBarFragment.setCallButtonEnabled(false)
         }
@@ -645,7 +643,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
                 Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
                 this@MainActivity.otWrapper.disconnect() //end communication
-                progressDialog.dismiss()
+                progressBar.hide()
                 cleanViewsAndControls() //restart views
             }
         })

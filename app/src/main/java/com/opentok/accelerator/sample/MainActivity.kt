@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private var isReadyToCall = false
 
     //Current orientation
-    private var mOrientation = 0
+    private var orientation = 0
 
     //Current remote
     private var mCurrentRemote: String? = null
@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         }
 
         //get orientation
-        mOrientation = resources.configuration.orientation
+        orientation = resources.configuration.orientation
     }
 
     override fun onPause() {
@@ -902,7 +902,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun restartOrientation() {
-        requestedOrientation = mOrientation
+        requestedOrientation = orientation
     }
 
     private fun restartTextChatLayout(restart: Boolean) {

@@ -290,7 +290,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             showAVCall(false)
             otWrapper.stopPublishingMedia(false) //stop call
             isCallInProgress = false
-            val builder = PreviewConfigBuilder().name("TokboxerScreen").renderer(screenSharingRenderer)
+            val builder = PreviewConfigBuilder().name("VonageScreen").renderer(screenSharingRenderer)
             otWrapper.startPublishingMedia(builder.build(), true) //start screen sharing
             webViewContainer.visibility = View.VISIBLE
             actionBarFragment.showAnnotations(true)

@@ -72,7 +72,6 @@
             android:background="@color/black"
             android:clickable="true"
             android:gravity="center"
-            android:onClick="onCallToolbar"
             android:text="Call Toolbar"
             android:textColor="@color/white"
             android:visibility="gone"></TextView>

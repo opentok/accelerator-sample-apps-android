@@ -1,6 +1,7 @@
 package com.opentok.accelerator.sample
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -8,7 +9,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PixelFormat
 import android.graphics.Point
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -34,6 +34,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
@@ -182,6 +183,10 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         callToolbar = findViewById(R.id.call_toolbar)
         progressBar = findViewById(R.id.progressBar)
 
+        findViewById<TextView>(R.id.call_toolbar).setOnClickListener {
+            showAll()
+        }
+
         //request runtime camera permission
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -264,10 +269,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 builder.show()
             }
         }
-    }
-
-    fun onCallToolbar(view: View?) {
-        showAll()
     }
 
     //ParticipantAdapter listener
@@ -454,7 +455,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 webViewContainer.loadUrl("https://www.tokbox.com")
             } else {
                 //audio/video call view
-                val participant = Participant(Participant.Type.LOCAL, this@MainActivity.otWrapper.localStreamStatus, participantSize)
+                val participant = Participant(
+                    Participant.Type.LOCAL,
+                    this@MainActivity.otWrapper.localStreamStatus,
+                    participantSize
+                )
                 addNewParticipant(participant)
             }
         }
@@ -497,7 +502,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 screenRemoteId = null
                 removeRemoteScreenSharing()
             } else {
-                participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId}
+                participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId }
                 //ToDo: why we are reversing?
                 participantsList.reverse()
                 participantsAdapter.notifyDataSetChanged()
@@ -525,13 +530,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         @Throws(ListenerException::class)
         override fun onRemoteJoined(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote joined.")
-
         }
 
         @Throws(ListenerException::class)
         override fun onRemoteLeft(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote left.")
-
         }
 
         @Throws(ListenerException::class)
@@ -652,41 +655,48 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun saveScreenCapture(bmp: Bitmap?) {
-        if (bmp != null) {
-            val localRemoteAnnotationsView = remoteAnnotationsView
+        bmp ?: return
 
-            var annotationsBmp = if (localRemoteAnnotationsView != null) {
-                getBitmapFromView(localRemoteAnnotationsView)
-            } else {
-                null
+        val localRemoteAnnotationsView = remoteAnnotationsView
+
+        val annotationsBmp = if (localRemoteAnnotationsView != null) {
+            getBitmapFromView(localRemoteAnnotationsView)
+        } else {
+            null
+        }
+
+        val overlayBmp: Bitmap = mergeBitmaps(bmp, annotationsBmp)
+
+
+        try {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val filename = "$timeStamp.jpg"
+            val path = getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString()
+            val outputStream: OutputStream?
+            val file = File(path, filename)
+
+            outputStream = FileOutputStream(file)
+            overlayBmp.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+            ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, timeStamp)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, file.absolutePath)
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
             }
 
-            val overlayBmp: Bitmap = mergeBitmaps(bmp, annotationsBmp)
-            val filename: String
-            val date = Date()
-
-            //ToDo: Use local settings
-            val sdf = SimpleDateFormat("yyyyMMddHHmmss")
-            filename = sdf.format(date)
-            try {
-                val path = Environment.getExternalStorageDirectory().toString()
-                var fOut: OutputStream? = null
-                val file = File(path, "$filename.jpg")
-                fOut = FileOutputStream(file)
-                overlayBmp.compress(Bitmap.CompressFormat.JPEG, 85, fOut)
-                fOut.flush()
-                fOut.close()
-                MediaStore.Images.Media.insertImage(
-                    contentResolver, file.absolutePath, file.name, file.name
-                )
-                openScreenshot(file)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            shareScreenshot(file)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    // ToDo: Cnvert to Kotlin extension
+    // ToDo: Convert to Kotlin extension
     private fun getBitmapFromView(view: View): Bitmap {
         val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
@@ -711,8 +721,15 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         return bmpOverlay
     }
 
-    private fun openScreenshot(imageFile: File) {
-        val uri = Uri.fromFile(imageFile)
+    private fun shareScreenshot(imageFile: File) {
+        // target API 24 requires FileProvider that have to be configured in the AndroidManifest.xm
+        val uri = FileProvider.getUriForFile(
+            this,
+            "com.opentok.accelerator.sample.provider",
+            imageFile
+        )
+
+
         val intentSend = Intent()
         intentSend.action = Intent.ACTION_SEND
         intentSend.type = "image/*"

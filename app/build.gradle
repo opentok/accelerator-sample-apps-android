@@ -36,14 +36,17 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 
+
+    //    implementation 'com.opentok.android:opentok-accelerator-core:1.0.24'
     implementation files('../../accelerator-core-android/accelerator-core/build/outputs/aar/opentok-accelerator-core' +
             '-debug.aar/opentok-accelerator-core-2.0.0-alpha.1.aar')
-//    implementation 'com.opentok.android:opentok-accelerator-core:1.0.24'
+
+    // Transitive
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation "com.opentok.android:opentok-android-sdk:2.18.1"
     implementation 'com.opentok.android:opentok-solutions-logging:1.0.3'
 

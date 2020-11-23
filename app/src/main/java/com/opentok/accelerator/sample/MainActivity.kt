@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        participantsGrid = findViewById<View>(R.id.grid_container) as RecyclerView
+        participantsGrid = findViewById(R.id.grid_container)
         gridLayoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
         setupMultipartyLayout()
         participantsGrid.layoutManager = gridLayoutManager
@@ -173,14 +173,14 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        webViewContainer = findViewById<View>(R.id.webview) as WebView
-        alert = findViewById<View>(R.id.quality_warning) as TextView
-        screenSharingContainer = findViewById<View>(R.id.screen_sharing_container) as RelativeLayout
-        actionBarContainer = findViewById<View>(R.id.actionbar_fragment_container) as RelativeLayout
-        textChatContainer = findViewById<View>(R.id.textchat_fragment_container) as FrameLayout
-        annotationsToolbar = findViewById<View>(R.id.annotations_bar) as AnnotationsToolbar
-        callToolbar = findViewById<View>(R.id.call_toolbar) as TextView
-        progressBar = findViewById<View>(R.id.progressBar) as ProgressBar
+        webViewContainer = findViewById(R.id.webview)
+        alert = findViewById(R.id.quality_warning)
+        screenSharingContainer = findViewById(R.id.screen_sharing_container)
+        actionBarContainer = findViewById(R.id.actionbar_fragment_container)
+        textChatContainer = findViewById(R.id.textchat_fragment_container)
+        annotationsToolbar = findViewById(R.id.annotations_bar)
+        callToolbar = findViewById(R.id.call_toolbar)
+        progressBar = findViewById(R.id.progressBar)
 
         //request runtime camera permission
         if (ContextCompat.checkSelfPermission(

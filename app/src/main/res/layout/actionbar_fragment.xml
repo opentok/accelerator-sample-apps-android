@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutPreviewActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,7 +19,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="14.1dp"
             android:layout_toLeftOf="@+id/localAudio"
-            android:background="@drawable/bckg_icon"
+            android:background="@drawable/background_icon"
             android:src="@drawable/video_icon" />
 
         <ImageButton
@@ -28,7 +27,7 @@
             android:layout_width="@dimen/icon_width"
             android:layout_height="@dimen/icon_height"
             android:layout_centerVertical="true"
-            android:background="@drawable/bckg_icon"
+            android:background="@drawable/background_icon"
             android:src="@drawable/mic_icon" />
 
         <ImageButton
@@ -49,18 +48,18 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="14.1dp"
             android:layout_toRightOf="@+id/call"
-            android:background="@drawable/bckg_icon"
+            android:background="@drawable/background_icon"
             android:src="@drawable/annotate"
             android:visibility="gone"/>
 
         <ImageButton
-            android:id="@+id/textchat"
+            android:id="@+id/textChat"
             android:layout_width="@dimen/icon_width"
             android:layout_height="@dimen/icon_height"
             android:layout_centerVertical="true"
             android:layout_marginLeft="14.1dp"
             android:layout_toRightOf="@+id/call"
-            android:background="@drawable/bckg_icon"
+            android:background="@drawable/background_icon"
             android:src="@drawable/message" />
 
         <ImageButton
@@ -73,8 +72,8 @@
             android:adjustViewBounds="false"
             android:layout_marginRight="12dp"
             android:layout_marginStart="38dp"
-            android:layout_alignTop="@+id/textchat"
-            android:layout_alignStart="@+id/textchat" />
+            android:layout_alignStart="@+id/textChat"
+            android:layout_alignTop="@+id/textChat" />
 
         <ImageButton
             android:id="@+id/screenSharing"
@@ -82,8 +81,8 @@
             android:layout_height="@dimen/icon_height"
             android:layout_centerVertical="true"
             android:layout_marginLeft="14.1dp"
-            android:layout_toRightOf="@+id/textchat"
-            android:background="@drawable/bckg_icon"
+            android:layout_toRightOf="@+id/textChat"
+            android:background="@drawable/background_icon"
             android:src="@drawable/screenshare" />
 
     </RelativeLayout>

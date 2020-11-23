@@ -54,7 +54,7 @@ class ActionBarFragment : Fragment() {
             R.id.call -> callOnClickListener()
             R.id.screenSharing -> screenSharingOnClickListener()
             R.id.annotations -> annotationsOnClickListener()
-            R.id.textchat -> textChatOnClickListener()
+            R.id.textChat -> textChatOnClickListener()
         }
     }
 
@@ -82,13 +82,13 @@ class ActionBarFragment : Fragment() {
         callButton = rootView.findViewById(R.id.call) as ImageButton
         screenSharingButton = rootView.findViewById(R.id.screenSharing) as ImageButton
         annotationsButton = rootView.findViewById(R.id.annotations) as ImageButton
-        textChatButton = rootView.findViewById(R.id.textchat) as ImageButton
+        textChatButton = rootView.findViewById(R.id.textChat) as ImageButton
         unreadMessagesButton = rootView.findViewById(R.id.unread_messages) as ImageButton
 
         //ToDo: instead of getting drawables, maybe you should get separate buttons
         drawableStartCall = VectorDrawableCompat.create(resources, R.drawable.initiate_call_button, null)
         drawableEndCall = VectorDrawableCompat.create(resources, R.drawable.end_call_button, null)
-        drawableBckButton = VectorDrawableCompat.create(resources, R.drawable.bckg_icon, null)
+        drawableBckButton = VectorDrawableCompat.create(resources, R.drawable.background_icon, null)
 
         updateMicrophoneButton()
         updateCameraButton()
@@ -145,7 +145,7 @@ class ActionBarFragment : Fragment() {
         annotationsButton.setOnClickListener(if (!mainActivity.isScreenSharing) mButtonClickListener else null)
         screenSharingButton.setBackgroundResource(if (!mainActivity.isScreenSharing) R.drawable.bckg_icon_selected
         else R
-            .drawable.bckg_icon)
+            .drawable.background_icon)
         previewControlCallbacks?.onScreenSharing()
     }
 
@@ -193,12 +193,12 @@ class ActionBarFragment : Fragment() {
         setEnabled(false)
         callButton.setBackgroundResource(R.drawable.initiate_call_button)
         callButton.setImageResource(R.drawable.start_call)
-        screenSharingButton.setBackgroundResource(R.drawable.bckg_icon)
-        annotationsButton.setBackgroundResource(R.drawable.bckg_icon)
+        screenSharingButton.setBackgroundResource(R.drawable.background_icon)
+        annotationsButton.setBackgroundResource(R.drawable.background_icon)
     }
 
     private fun restartAnnotations() {
-        annotationsButton.setBackgroundResource(R.drawable.bckg_icon)
+        annotationsButton.setBackgroundResource(R.drawable.background_icon)
         enableAnnotations(false)
     }
 
@@ -207,7 +207,7 @@ class ActionBarFragment : Fragment() {
     }
 
     fun restartScreenSharing() {
-        screenSharingButton.setBackgroundResource(R.drawable.bckg_icon)
+        screenSharingButton.setBackgroundResource(R.drawable.background_icon)
     }
 
     fun showAnnotations(show: Boolean) {

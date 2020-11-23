@@ -174,11 +174,11 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        webViewContainer = findViewById(R.id.webview)
+        webViewContainer = findViewById(R.id.webView)
         alert = findViewById(R.id.quality_warning)
         screenSharingContainer = findViewById(R.id.screen_sharing_container)
         actionBarContainer = findViewById(R.id.actionbar_fragment_container)
-        textChatContainer = findViewById(R.id.textchat_fragment_container)
+        textChatContainer = findViewById(R.id.text_chat_fragment_container)
         annotationsToolbar = findViewById(R.id.annotations_bar)
         callToolbar = findViewById(R.id.call_toolbar)
         progressBar = findViewById(R.id.progressBar)
@@ -280,15 +280,14 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     override fun onScreenSharing() {
         if (isScreenSharing) {
             stopScreenSharing()
-            //start avcall
             isCallInProgress = true
-            showAVCall(true)
+            showAudioVideoCall(true)
             otWrapper.startPublishingMedia(PreviewConfigBuilder().name("Vonage").build(), false) //restart av call
             webViewContainer.hide()
             actionBarFragment.showAnnotations(false)
         } else {
             isScreenSharing = true
-            showAVCall(false)
+            showAudioVideoCall(false)
             otWrapper.stopPublishingMedia(false) //stop call
             isCallInProgress = false
             val builder = PreviewConfigBuilder().name("VonageScreen").renderer(screenSharingRenderer)
@@ -309,9 +308,9 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     override fun onTextChat() {
         if (textChatContainer.visibility == View.VISIBLE) {
             textChatContainer.hide()
-            showAVCall(true)
+            showAudioVideoCall(true)
         } else {
-            showAVCall(false)
+            showAudioVideoCall(false)
             textChatContainer.show()
             actionBarFragment.unreadMessages(false)
         }
@@ -336,7 +335,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     override fun onClosed() {
         Log.i(LOG_TAG, "OnClosed text-chat")
         textChatContainer.hide()
-        showAVCall(true)
+        showAudioVideoCall(true)
         actionBarFragment.unreadMessages(false)
         restartTextChatLayout(true)
     }
@@ -369,7 +368,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             } else {
                 if (isScreenSharing) {
                     stopScreenSharing()
-                    showAVCall(true)
+                    showAudioVideoCall(true)
                 } else {
                     otWrapper.stopPublishingMedia(false)
                     otWrapper.disconnect()
@@ -448,7 +447,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
             if (isScreenSharing) {
                 //Share local web view
-                screenSharingView = localView as ViewGroup //ToDo: Is this always ViewGroup? Update lisener definition
+                screenSharingView = localView as ViewGroup //ToDo: Is this always ViewGroup? Update listener definition
                 webViewContainer.webViewClient = WebViewClient()
                 val webSettings = webViewContainer.settings
                 webSettings.javaScriptEnabled = true
@@ -781,7 +780,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun initTextChatFragment() {
         textChatFragment = TextChatFragment.newInstance(otWrapper.session, otConfig.apiKey)
         supportFragmentManager.beginTransaction()
-            .add(R.id.textchat_fragment_container, textChatFragment).commit()
+            .add(R.id.text_chat_fragment_container, textChatFragment).commit()
         supportFragmentManager.executePendingTransactions()
         try {
             textChatFragment.senderAlias = "Vonage"
@@ -813,7 +812,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         restartOrientation()
     }
 
-    private fun showAVCall(show: Boolean) {
+    private fun showAudioVideoCall(show: Boolean) {
         if (show && screenRemoteId == null) {
             participantsGrid.show()
             screenSharingContainer.hide()
@@ -908,7 +907,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         if (otWrapper.getRemoteStreamStatus(remoteId).width > otWrapper.getRemoteStreamStatus(remoteId).height) {
             forceLandscape()
         }
-        showAVCall(false)
+        showAudioVideoCall(false)
         screenSharingContainer.removeAllViews()
         screenSharingContainer.show()
         screenSharingContainer.addView(screenView)
@@ -917,7 +916,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun removeRemoteScreenSharing() {
-        showAVCall(true)
+        showAudioVideoCall(true)
         isRemoteAnnotations = false
         showAnnotationsToolbar(false)
         restartOrientation()

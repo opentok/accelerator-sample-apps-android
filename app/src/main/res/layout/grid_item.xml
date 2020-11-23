@@ -40,7 +40,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/gradient_audionly"
+        android:background="@drawable/gradient_audio_only"
         android:visibility="gone" >
 
         <ImageView

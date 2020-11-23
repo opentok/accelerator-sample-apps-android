@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_backg"
+    android:background="@drawable/gradient_background"
     android:keepScreenOn="true"
     tools:context="com.opentok.accelerator.sample.MainActivity">
 
@@ -19,30 +19,30 @@
                 android:layout_centerInParent="true"/>
 
         <TextView
-            android:id="@+id/quality_warning"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/alert_bar_height"
-            android:background="@color/quality_warning"
-            android:gravity="center"
-            android:text="@string/network_quality"
-            android:textColor="@color/warning_text"
-            android:textSize="@dimen/alert_text"
-            android:visibility="gone"></TextView>
+                android:id="@+id/quality_warning"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/alert_bar_height"
+                android:background="@color/quality_warning"
+                android:gravity="center"
+                android:text="@string/network_quality"
+                android:textColor="@color/warning_text"
+                android:textSize="@dimen/alert_text"
+                android:visibility="gone" />
 
         <WebView
-            android:id="@+id/webview"
+            android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:orientation="horizontal"
             android:visibility="gone" />
 
         <RelativeLayout
-            android:id="@+id/screen_sharing_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"></RelativeLayout>
+                android:id="@+id/screen_sharing_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid_container"
@@ -50,12 +50,12 @@
             android:layout_height="match_parent" />
 
         <RelativeLayout
-            android:id="@+id/actionbar_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:visibility="visible"></RelativeLayout>
+                android:id="@+id/actionbar_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/action_bar_height"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="visible" />
 
         <com.opentok.accelerator.annotation.AnnotationsToolbar
             android:id="@+id/annotations_bar"
@@ -65,25 +65,25 @@
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/call_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/black"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="Call Toolbar"
-            android:textColor="@color/white"
-            android:visibility="gone"></TextView>
+                android:id="@+id/call_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/black"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="Call Toolbar"
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
         <FrameLayout
-            android:id="@+id/textchat_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/actionbar_fragment_container"
-            android:background="@color/white"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"></FrameLayout>
+                android:id="@+id/text_chat_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/actionbar_fragment_container"
+                android:background="@color/white"
+                android:visibility="gone"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </RelativeLayout>
 

@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:gravity="center_horizontal">
+
+    <RelativeLayout
+        android:id="@+id/remoteControls"
+        android:layout_width="@dimen/action_bar_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/remoteVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/video_icon"
+            android:onClick="onRemoteVideoChanged"/>
+
+        <ImageButton
+            android:id="@+id/remoteAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/remoteVideo"
+            android:layout_marginTop="25dp"
+            android:background="@null"
+            android:src="@drawable/audio_icon"
+            android:onClick="onRemoteAudioChanged"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/audioOnlyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/gradient_audio_only"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/avatar" />
+    </RelativeLayout>
+
+</RelativeLayout>

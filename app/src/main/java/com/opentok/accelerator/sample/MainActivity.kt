@@ -42,7 +42,6 @@ import com.opentok.accelerator.annotation.AnnotationsView.AnnotationsListener
 import com.opentok.accelerator.annotation.utils.AnnotationsVideoRenderer
 import com.opentok.accelerator.core.listeners.AdvancedListener
 import com.opentok.accelerator.core.listeners.BasicListener
-import com.opentok.accelerator.core.listeners.ListenerException
 import com.opentok.accelerator.core.listeners.PausableAdvancedListener
 import com.opentok.accelerator.core.listeners.PausableBasicListener
 import com.opentok.accelerator.core.utils.MediaType
@@ -397,7 +396,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
 
     //Basic Listener from OTWrapper
     private val mBasicListener: BasicListener<*> = PausableBasicListener<Any?>(object : BasicListener<OTWrapper?> {
-        @Throws(ListenerException::class)
         override fun onConnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
             Log.i(LOG_TAG, "Connected to the session. Number of participants: $participantsCount, connId: $connId")
             if (this@MainActivity.otWrapper.ownConnId == connId) {
@@ -415,7 +413,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onDisconnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
             Log.i(
                 LOG_TAG,
@@ -428,7 +425,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onPreviewViewReady(otWrapper: OTWrapper?, localView: View) {
             Log.i(LOG_TAG, "Local preview view is ready")
 
@@ -450,15 +446,12 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onPreviewViewDestroyed(otWrapper: OTWrapper?) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
             participantsList.removeAll { it.type == Participant.Type.LOCAL }
-            participantsList.reverse()
             participantsAdapter.notifyDataSetChanged()
         }
 
-        @Throws(ListenerException::class)
         override fun onRemoteViewReady(otWrapper: OTWrapper?, remoteView: View, remoteId: String, data: String) {
             Log.i(LOG_TAG, "Participant remote view is ready")
 
@@ -477,7 +470,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onRemoteViewDestroyed(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "Remote view is destroyed")
 
@@ -486,12 +478,10 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 removeRemoteScreenSharing()
             } else {
                 participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId }
-                participantsList.reverse()
                 participantsAdapter.notifyDataSetChanged()
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onStartedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local started streaming video.")
 
@@ -501,7 +491,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             actionBarFragment.setCallButtonEnabled(true)
         }
 
-        @Throws(ListenerException::class)
         override fun onStoppedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local stopped streaming video.")
 
@@ -509,17 +498,14 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             isCallInProgress = false
         }
 
-        @Throws(ListenerException::class)
         override fun onRemoteJoined(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote joined.")
         }
 
-        @Throws(ListenerException::class)
         override fun onRemoteLeft(otWrapper: OTWrapper?, remoteId: String) {
             Log.i(LOG_TAG, "A new remote left.")
         }
 
-        @Throws(ListenerException::class)
         override fun onRemoteVideoChanged(
             otWrapper: OTWrapper?,
             remoteId: String,
@@ -542,7 +528,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        @Throws(ListenerException::class)
         override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
             Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
             Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
@@ -556,18 +541,15 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     //Advanced Listener from OTWrapper
     private val mAdvancedListener: AdvancedListener<OTWrapper> =
         PausableAdvancedListener(object : AdvancedListener<OTWrapper?> {
-            @Throws(ListenerException::class)
             override fun onCameraChanged(otWrapper: OTWrapper?) {
                 Log.i(LOG_TAG, "The camera changed")
             }
 
-            @Throws(ListenerException::class)
             override fun onReconnecting(otWrapper: OTWrapper?) {
                 Log.i(LOG_TAG, "The session is reconnecting.")
                 Toast.makeText(this@MainActivity, R.string.reconnecting, Toast.LENGTH_LONG).show()
             }
 
-            @Throws(ListenerException::class)
             override fun onReconnected(otWrapper: OTWrapper?) {
                 Log.i(LOG_TAG, "The session reconnected.")
                 Toast.makeText(this@MainActivity, R.string.reconnected, Toast.LENGTH_LONG).show()
@@ -593,7 +575,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 Toast.makeText(this@MainActivity, R.string.audio_disabled, Toast.LENGTH_LONG).show()
             }
 
-            @Throws(ListenerException::class)
             override fun onVideoQualityWarning(otWrapper: OTWrapper?, remoteId: String) {
                 Log.i(LOG_TAG, "The quality has degraded")
                 alert.setBackgroundResource(R.color.quality_warning)
@@ -603,17 +584,14 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 alert.postDelayed({ alert.hide() }, 7000)
             }
 
-            @Throws(ListenerException::class)
             override fun onVideoQualityWarningLifted(otWrapper: OTWrapper?, remoteId: String) {
                 Log.i(LOG_TAG, "The quality has improved")
             }
 
-            @Throws(ListenerException::class)
             override fun onAudioLevelUpdated(audioLevel: Float) {
                 Log.i(LOG_TAG, "Audio level changed. Level: $audioLevel")
             }
 
-            @Throws(ListenerException::class)
             override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
                 Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
                 Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
@@ -897,7 +875,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun updateParticipantList() {
-        //update list
         for (i in participantsList.indices) {
             val participant = participantsList[i]
             if (i == 0) {
@@ -912,7 +889,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             participantsList[i] = participant
         }
 
-        participantsList.reverse()
         participantsAdapter.notifyDataSetChanged()
     }
 

@@ -449,7 +449,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         override fun onPreviewViewDestroyed(otWrapper: OTWrapper?) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
             participantsList.removeAll { it.type == Participant.Type.LOCAL }
-            participantsAdapter.notifyDataSetChanged()
+            updateParticipantList()
         }
 
         override fun onRemoteViewReady(otWrapper: OTWrapper?, remoteView: View, remoteId: String, data: String) {
@@ -478,7 +478,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 removeRemoteScreenSharing()
             } else {
                 participantsList.removeAll { it.type == Participant.Type.REMOTE && it.remoteId == remoteId }
-                participantsAdapter.notifyDataSetChanged()
+                updateParticipantList()
             }
         }
 
@@ -739,6 +739,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     private fun cleanViewsAndControls() {
         participantsGrid.removeAllViews()
         participantsList.clear()
+        updateParticipantList()
         actionBarFragment.restart()
         restartTextChatLayout(true)
         textChatFragment.restart()

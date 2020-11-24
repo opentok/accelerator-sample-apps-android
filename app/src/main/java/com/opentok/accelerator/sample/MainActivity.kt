@@ -394,8 +394,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     //Basic Listener from OTWrapper
-    private val basicListener: BasicListener<*> = PausableBasicListener<Any?>(object : BasicListener<OTWrapper?> {
-        override fun onConnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
+    private val basicListener = PausableBasicListener<OTWrapper>(object : BasicListener<OTWrapper> {
+        override fun onConnected(otWrapper: OTWrapper, participantsCount: Int, connId: String, data: String) {
             Log.i(LOG_TAG, "Connected to the session. Number of participants: $participantsCount, connId: $connId")
             if (this@MainActivity.otWrapper.ownConnId == connId) {
                 isConnected = true
@@ -412,7 +412,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onDisconnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
+        override fun onDisconnected(otWrapper: OTWrapper, participantsCount: Int, connId: String, data: String) {
             Log.i(
                 LOG_TAG,
                 "Connection dropped: Number of participants: $participantsCount, connId: $connId"
@@ -424,7 +424,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onPreviewViewReady(otWrapper: OTWrapper?, localView: View) {
+        override fun onPreviewViewReady(otWrapper: OTWrapper, localView: View) {
             Log.i(LOG_TAG, "Local preview view is ready")
 
             if (isScreenSharing) {
@@ -445,13 +445,13 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onPreviewViewDestroyed(otWrapper: OTWrapper?) {
+        override fun onPreviewViewDestroyed(otWrapper: OTWrapper) {
             Log.i(LOG_TAG, "Local preview view is destroyed")
             participantsList.removeAll { it.type == Participant.Type.LOCAL }
             updateParticipantList()
         }
 
-        override fun onRemoteViewReady(otWrapper: OTWrapper?, remoteView: View, remoteId: String, data: String) {
+        override fun onRemoteViewReady(otWrapper: OTWrapper, remoteView: View, remoteId: String, data: String) {
             Log.i(LOG_TAG, "Participant remote view is ready")
 
             if (this@MainActivity.otWrapper.getRemoteStreamStatus(remoteId).type == StreamStatus.StreamType.SCREEN) {
@@ -469,7 +469,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onRemoteViewDestroyed(otWrapper: OTWrapper?, remoteId: String) {
+        override fun onRemoteViewDestroyed(otWrapper: OTWrapper, remoteId: String) {
             Log.i(LOG_TAG, "Remote view is destroyed")
 
             if (remoteId == screenRemoteId) {
@@ -481,7 +481,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onStartedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
+        override fun onStartedPublishingMedia(otWrapper: OTWrapper, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local started streaming video.")
 
             if (screenSharing) {
@@ -490,18 +490,18 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             actionBarFragment.setCallButtonEnabled(true)
         }
 
-        override fun onStoppedPublishingMedia(otWrapper: OTWrapper?, screenSharing: Boolean) {
+        override fun onStoppedPublishingMedia(otWrapper: OTWrapper, screenSharing: Boolean) {
             Log.i(LOG_TAG, "Local stopped streaming video.")
 
             actionBarFragment.setCallButtonEnabled(true)
             isCallInProgress = false
         }
 
-        override fun onRemoteJoined(otWrapper: OTWrapper?, remoteId: String) {
+        override fun onRemoteJoined(otWrapper: OTWrapper, remoteId: String) {
             Log.i(LOG_TAG, "A new remote joined.")
         }
 
-        override fun onRemoteLeft(otWrapper: OTWrapper?, remoteId: String) {
+        override fun onRemoteLeft(otWrapper: OTWrapper, remoteId: String) {
             Log.i(LOG_TAG, "A new remote left.")
         }
 
@@ -527,7 +527,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             }
         }
 
-        override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
+        override fun onError(otWrapper: OTWrapper, error: OpentokError) {
             Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
             Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
             this@MainActivity.otWrapper.disconnect()
@@ -538,43 +538,42 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     })
 
     //Advanced Listener from OTWrapper
-    private val advancedListener: AdvancedListener<OTWrapper> =
-        PausableAdvancedListener(object : AdvancedListener<OTWrapper?> {
-            override fun onCameraChanged(otWrapper: OTWrapper?) {
+    private val advancedListener = PausableAdvancedListener<OTWrapper>(object : AdvancedListener<OTWrapper> {
+            override fun onCameraChanged(otWrapper: OTWrapper) {
                 Log.i(LOG_TAG, "The camera changed")
             }
 
-            override fun onReconnecting(otWrapper: OTWrapper?) {
+            override fun onReconnecting(otWrapper: OTWrapper) {
                 Log.i(LOG_TAG, "The session is reconnecting.")
                 Toast.makeText(this@MainActivity, R.string.reconnecting, Toast.LENGTH_LONG).show()
             }
 
-            override fun onReconnected(otWrapper: OTWrapper?) {
+            override fun onReconnected(otWrapper: OTWrapper) {
                 Log.i(LOG_TAG, "The session reconnected.")
                 Toast.makeText(this@MainActivity, R.string.reconnected, Toast.LENGTH_LONG).show()
             }
 
-            override fun onReconnected(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onReconnected(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "The session reconnected remoteId: $remoteId")
                 Toast.makeText(this@MainActivity, R.string.reconnected, Toast.LENGTH_LONG).show()
             }
 
-            override fun onDisconnected(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onDisconnected(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "The session disconnected remoteId: $remoteId")
                 Toast.makeText(this@MainActivity, R.string.disconnected, Toast.LENGTH_LONG).show()
             }
 
-            override fun onAudioEnabled(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onAudioEnabled(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "Audio enabled remoteId: $remoteId")
                 Toast.makeText(this@MainActivity, R.string.audio_enabled, Toast.LENGTH_LONG).show()
             }
 
-            override fun onAudioDisabled(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onAudioDisabled(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "Audio disabled remoteId: $remoteId")
                 Toast.makeText(this@MainActivity, R.string.audio_disabled, Toast.LENGTH_LONG).show()
             }
 
-            override fun onVideoQualityWarning(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onVideoQualityWarning(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "The quality has degraded")
                 alert.setBackgroundResource(R.color.quality_warning)
                 alert.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.warning_text))
@@ -583,7 +582,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 alert.postDelayed({ alert.hide() }, 7000)
             }
 
-            override fun onVideoQualityWarningLifted(otWrapper: OTWrapper?, remoteId: String) {
+            override fun onVideoQualityWarningLifted(otWrapper: OTWrapper, remoteId: String) {
                 Log.i(LOG_TAG, "The quality has improved")
             }
 
@@ -591,7 +590,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
                 Log.i(LOG_TAG, "Audio level changed. Level: $audioLevel")
             }
 
-            override fun onError(otWrapper: OTWrapper?, error: OpentokError) {
+            override fun onError(otWrapper: OTWrapper, error: OpentokError) {
                 Log.i(LOG_TAG, "Error " + error.errorCode + "-" + error.message)
                 Toast.makeText(this@MainActivity, error.message, Toast.LENGTH_LONG).show()
                 this@MainActivity.otWrapper.disconnect() //end communication

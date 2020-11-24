@@ -2,116 +2,63 @@
 
 <img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
-## Quick start
+This project demonstrates Accelerator Sample App - multiparty, web-based audio, video, and messaging solution for Android Platform.
+This project utilizes [accelerator-core-android](https://github.com/opentok/accelerator-core-android).
 
-This section shows you how to prepare, build, and run the sample application.
+> Under the hood [accelerator-core-android](https://github.com/opentok/accelerator-core-android) utilizes [Vonage Video API Android SDK](https://tokbox.com/developer/sdks/android/) and opentokRTC.
 
-### Requirements
+## Getting started
 
-To develop your multiparty accelerator sample app:
+### Open this project
 
-1. Install [Android Studio](http://developer.android.com/intl/es/sdk/index.html)
-1. Review the [OpenTok Android SDK Requirements](https://tokbox.com/developer/sdks/android/#developerandclientrequirements)
+There are a few ways to open this project.
 
-### Install the project files
+#### Android Studio
 
-1. Clone the [OpenTok Accelerator Sample App for Android repository](https://github.com/opentok/accelerator-sample-apps-android) from GitHub.
-1. Start Android Studio.
-1. In the **Quick Start** panel, click **Open an existing Android Studio Project**.
-1. Navigate to the **android** folder, select the **AcceleratorSampleApp** folder, and click **Choose**.
+1. Go to `Android Studio` and select `File > New > From Version control > Git`
+2. Enter `git@github.com:opentok/accelerator-sample-apps-android.git` into URL field
 
-### Add dependencies
+#### Command-line + Android Studio
 
-The multiparty sample app uses the [OpenTok Accelerator Core](https://github.com/opentok/accelerator-core-android), the [Opentok Accelerator Annotation](https://github.com/opentok/accelerator-annotation-android) and [OpenTok Accelerator TextChat](https://github.com/opentok/accelerator-textchat-android). 
-There are two options to add the dependencies:
+1. Run `git clone git@github.com:opentok/accelerator-sample-apps-android.git` to clone project
+2. Go to `Android Studio` and select `File > Open` and navigate to the newly cloned directory
 
-#### Using Maven
+### Set app config
 
-1. Modify the `build.gradle` for your solution and add the following code snippet to the section labeled `repositories`:
+Before running the application, we need to configure project specific settings. 
+Open the [dashboard](https://dashboard.tokbox.com/), select specific application and to get the `apiKey`, `sessionId` and `token`.
 
-  ```gradle
-    maven { url  "http://tokbox.bintray.com/maven" }
+Open `com.opentok.accelerator.sample.AppConfig` file and fill the `apiKey`, `sessionId` and `token` for your Android project.
+
+## Replace maven dependency with accelerator-core-android code
+
+This project is using `implementation 'com.opentok.android:opentok-accelerator-core:x.y.z'` dependency to utilize accelerators. This dependency can be 
+replaced with [accelerator-core-android](https://github.com/opentok/accelerator-core-android) source code to facilicate developement of your application. 
+
+### Remove dependency
+
+1. Modify the root `build.gradle` file and remove the custom repository:
+
+```groovy
+maven { 
+  url  "http://tokbox.bintray.com/maven" 
+}
   ```
 
-1. Modify the `build.gradle` for your activity and add the following code snippet to the section labeled `dependencies`:
+2. Modify the `app/build.gradle` file and remove accelerator dependency:
   
-  ```gradle
-    compile 'com.opentok.android:opentok-accelerator-core:1.0.+'
-    compile 'com.opentok.android:opentok-accelerator-annotation:1.+'
-    compile 'com.opentok.android:opentok-accelerator-textchat:1.0.+'
-  ```
+```groovy
+  implementation 'com.opentok.android:opentok-accelerator-core:x.y.z'
+```
 
-#### Using the repository
+### Using the repository
 
 1. Clone the [OpenTok Accelerator Core repo](https://github.com/opentok/accelerator-core-android).
-2. From your app project, right-click the app name and select **New > Module > Import Gradle Project**.
-3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-core-android**, and click **Finish**.
-4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
-
-```gradle
-compile project(':accelerator-core-android')
-
-```
-
-1. Clone the [OpenTok Accelerator TextChat repo](https://github.com/opentok/accelerator-textchat-android).
-2. From your app project, right-click the app name and select **New > Module > Import Gradle Project**.
-3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-textchat-android**, and click **Finish**.
-4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
-
-```gradle
-compile project(':accelerator-textchat-android')
-
-```
-
-1. Clone the [OpenTok Accelerator Annotation repo](https://github.com/opentok/accelerator-annotation-android).
-2. From your app project, right-click the app name and select **New > Module > Import Gradle Project**.
-3. Navigate to the directory in which you cloned **OpenTok Accelerator Pack**, select **accelerator-annotation-android**, and click **Finish**.
-4. Open the **build.gradle** file for the app and ensure the following lines have been added to the `dependencies` section:
-
-```gradle
-compile project(':accelerator-annotation-android')
-
-```
-
-### Configure and build the app
-
-Configure the sample app code. Then, build and run the app.
-
-1. Get values for **API Key**, **Session ID**, and **Token**. See [OpenTok Developer Dashboard](https://dashboard.tokbox.com/).
-
-In Android Studio, open **OpenTokConfig.java** and replace the following empty strings with the corresponding **API Key**, **Session ID**, and **Token** values:
-
-  ```java
-    // Replace with a generated Session ID
-    public static final String SESSION_ID = "";
-
-    // Replace with a generated token
-    public static final String TOKEN = "";
-
-    // Replace with your OpenTok API key
-    public static final String API_KEY = "";
-  ```
-
-Then, the credentials values will be used in the Core Wrapper configuration.
-
-  ```java
-    //init the wrapper
-    OTConfig config =
-          new OTConfig.OTConfigBuilder(OpenTokConfig.SESSION_ID, OpenTokConfig.TOKEN,
-            OpenTokConfig.API_KEY).name("sample-app").subscribeAutomatically(true).subscribeToSelf(false).build();
-
-    if ( config != null ) {
-      mWrapper = new OTWrapper(MainActivity.this, config);
-      mWrapper.addBasicListener(mBasicListener);
-      mWrapper.addAdvancedListener(mAdvancedListener);
-
-      //...
-    }
-  ```
+2. Go to `Android Studio` and select `New > Module > Import Gradle Project` and navigate to the newly cloned directory.
 
 ## Exploring the code
 
-This section describes best practices the sample app code uses to implement the multiparty communication features.
+This section describes the best practices the sample app code uses to implement the communication features.
 
 For detail about the APIs used to develop this sample, see the [OpenTok Android SDK Reference](https://tokbox.com/developer/sdks/android/reference/) and [Android API Reference](http://developer.android.com/reference/packages.html).
 
@@ -121,112 +68,26 @@ For detail about the APIs used to develop this sample, see the [OpenTok Android 
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `MainActivity`        | Implements the UI and media control callbacks.                                                                         |
 | `OpenTokConfig`       | Stores the information required to configure the session and authorize the app to make requests to the backend server. |
-| `ActionBarFragment`   | Manages the toolbar for the local audio and video controls, the start/end call, text-chat and screensharing buttons.   |
+| `ActionBarFragment`   | Manages the toolbar for the local audio and video controls, the start/end call, text-chat, and screen sharing buttons.   |
 | `ScreensharingBar`    | Defines a view to represent the ScreenSharingBar.                                                                      |
 | `Participant `        | Represents an item in the data set                                                                                     |
 | `ParticipantAdapter ` | Custom RecyclerView.Adapter responsible for providing views that represent items in the data set.                      |
 
 ### Session and streams management
 
-The `OTWrapper` class, included in the Accelerator Core for Android, is the backbone of the multiparty communication features for the app.
+The `OTWrapper` class, included in the [accelerator-core-android](https://github.com/opentok/accelerator-core-android) is the backbone of the communication features for this app.
 
 This class uses the OpenTok API to initiate the client connection to the OpenTok session and manage the audio and video streams.
 
-```java
-  mWrapper.connect();
-  
-  mWrapper.startPublishingMedia(new PreviewConfig.PreviewConfigBuilder().
-                        name("Vonage").build(), false);
-
-  mWrapper.enableLocalMedia(MediaType.AUDIO, audio);
-  
-  mWrapper.disconnect();
+```kotlin
+otWrapper.connect()
+val previewConfig = new PreviewConfig.PreviewConfigBuilder().name("myConfig").build()
+otWrapper.startPublishingMedia(previewConfig, false)
+otWrapper.enableLocalMedia(MediaType.AUDIO, audio)
+otWrapper.disconnect()
 ```
 
-The BasicListener and AdvancedListener interface monitor state changes in the communication, and defines the following methods:
-
-```java
-  //Basic Listener from OTWrapper
-  private BasicListener mBasicListener =
-    new PausableBasicListener(new BasicListener<OTWrapper>() {
-    @Override
-    public void onConnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException { //...}
-    @Override
-    public void onDisconnected(OTWrapper otWrapper, int participantsCount, String connId, String data) throws ListenerException { //...}
-    @Override
-    public void onPreviewViewReady(OTWrapper otWrapper, View localView) throws ListenerException { //...}
-    @Override
-    public void onRemoteViewReady(OTWrapper otWrapper, View remoteView, String remoteId, String data) throws ListenerException { //...}
-    @Override
-    public void onStartedPublishingMedia(OTWrapper otWrapper, boolean screensharing) throws ListenerException { //...}
-    //...
-  });
-```
-
-```java
-  //Advanced Listener from OTWrapper
-  private AdvancedListener mAdvancedListener =
-    new PausableAdvancedListener(new AdvancedListener<OTWrapper>() {
-    @Override
-    public void onCameraChanged(OTWrapper otWrapper) throws ListenerException { //... }
-    @Override
-    public void onReconnecting(OTWrapper otWrapper) throws ListenerException { //... }
-    @Override
-    public void onReconnected(OTWrapper otWrapper) throws ListenerException { //... }
-    @Override
-    public void onVideoQualityWarning(OTWrapper otWrapper, String remoteId) throws ListenerException { //... }
-    //...
-  });
-```
-
-### Multiparty UI
-
-The UI for the multiparty audio/video communication is represented by an Android GridLayoutManager with RecycleViews. The different layout distributions depend on the number of participants. To adjust the number of columns for the GridLayout, the `getSpanSize` method has been override. 
-
-```java
- private void setupMultipartyLayout() {
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if (mParticipantsList.size() == 1) {
-                    return 2;
-                } else {
-                    if (mParticipantsList.size() == 2) {
-                        if (position == 0) {
-                            return 2;
-                        }
-                        return 1;
-                    } else {
-                        if (mParticipantsList.size() == 3) {
-                            if (position == 0 || position == 1) {
-                                return 1;
-                            } else {
-                                return 2;
-                            }
-                        } else {
-                            if (mParticipantsList.size() == 4) {
-                                return 1;
-                            } else {
-                                if (mParticipantsList.size() > 4) {
-                                    if (mParticipantsList.size() % 2 != 0) {
-                                        if (position == mParticipantsList.size() - 1) {
-                                            return 2;
-                                        } else {
-                                            return 1;
-                                        }
-                                    } else {
-                                        return 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                return 1;
-            }
-        });
-    }
-```
+The `BasicListener` and `AdvancedListener` interface monitor `OTWraper` state changes.
 
 ## Development and Contributing
 

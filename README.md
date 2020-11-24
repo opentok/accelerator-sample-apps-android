@@ -30,6 +30,9 @@ Open the [dashboard](https://dashboard.tokbox.com/), select specific application
 
 Open `com.opentok.accelerator.sample.AppConfig` file and fill the `apiKey`, `sessionId` and `token` for your Android project.
 
+> For production deployment, you must generate the `SessionId` and `token` using one of the [OpenTok Server SDKs](https://tokbox.com/developer/sdks/server/)
+(https://tokbox.com/developer/sdks/server/).
+
 ## Replace maven dependency with accelerator-core-android code
 
 This project is using `implementation 'com.opentok.android:opentok-accelerator-core:x.y.z'` dependency to utilize accelerators. This dependency can be 
@@ -48,7 +51,7 @@ maven {
 2. Modify the `app/build.gradle` file and remove accelerator dependency:
   
 ```groovy
-  implementation 'com.opentok.android:opentok-accelerator-core:x.y.z'
+implementation 'com.opentok.android:opentok-accelerator-core:x.y.z'
 ```
 
 ### Using the repository

@@ -193,8 +193,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         otWrapper = OTWrapper(this@MainActivity, otConfig)
 
         //set listener to receive the communication events, and add UI to these events
-        otWrapper.addBasicListener(mBasicListener)
-        otWrapper.addAdvancedListener(mAdvancedListener)
+        otWrapper.addBasicListener(basicListener)
+        otWrapper.addAdvancedListener(advancedListener)
         //use a custom video renderer for the annotations. It will be applied to the remote. It will be applied before to start subscribing
         remoteRenderer = AnnotationsVideoRenderer(this)
         screenSharingRenderer = AnnotationsVideoRenderer(this)
@@ -394,7 +394,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     //Basic Listener from OTWrapper
-    private val mBasicListener: BasicListener<*> = PausableBasicListener<Any?>(object : BasicListener<OTWrapper?> {
+    private val basicListener: BasicListener<*> = PausableBasicListener<Any?>(object : BasicListener<OTWrapper?> {
         override fun onConnected(otWrapper: OTWrapper?, participantsCount: Int, connId: String, data: String) {
             Log.i(LOG_TAG, "Connected to the session. Number of participants: $participantsCount, connId: $connId")
             if (this@MainActivity.otWrapper.ownConnId == connId) {
@@ -538,7 +538,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     })
 
     //Advanced Listener from OTWrapper
-    private val mAdvancedListener: AdvancedListener<OTWrapper> =
+    private val advancedListener: AdvancedListener<OTWrapper> =
         PausableAdvancedListener(object : AdvancedListener<OTWrapper?> {
             override fun onCameraChanged(otWrapper: OTWrapper?) {
                 Log.i(LOG_TAG, "The camera changed")
@@ -879,7 +879,6 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
             val participant = participantsList[i]
             if (i == 0) {
                 val metrics = resources.displayMetrics
-//                windowManager.defaultDisplay.getMetrics(metrics)
                 val width = metrics.widthPixels
                 val newSize = participantSize
                 participant.containerSize = Size(width, newSize.height)

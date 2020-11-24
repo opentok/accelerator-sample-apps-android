@@ -44,7 +44,7 @@ class ActionBarFragment : Fragment() {
         fun onTextChat()
     }
 
-    private val mButtonClickListener = View.OnClickListener {
+    private val buttonClickListener = View.OnClickListener {
         when (it.id) {
             R.id.localAudio -> localAudioOnClickListener()
             R.id.localVideo -> localVideoOnClickListener()
@@ -91,7 +91,7 @@ class ActionBarFragment : Fragment() {
         cameraButton.background = drawableBckButton
         callButton.setImageResource(if (mainActivity.isCallInProgress) R.drawable.hang_up else R.drawable.start_call)
         callButton.background = if (mainActivity.isCallInProgress) drawableEndCall else drawableStartCall
-        callButton.setOnClickListener(mButtonClickListener)
+        callButton.setOnClickListener(buttonClickListener)
         setEnabled(mainActivity.isCallInProgress)
         return rootView
     }
@@ -137,8 +137,8 @@ class ActionBarFragment : Fragment() {
     }
 
     private fun screenSharingOnClickListener() {
-        cameraButton.setOnClickListener(if (!mainActivity.isScreenSharing) null else mButtonClickListener)
-        annotationsButton.setOnClickListener(if (!mainActivity.isScreenSharing) mButtonClickListener else null)
+        cameraButton.setOnClickListener(if (!mainActivity.isScreenSharing) null else buttonClickListener)
+        annotationsButton.setOnClickListener(if (!mainActivity.isScreenSharing) buttonClickListener else null)
         screenSharingButton.setBackgroundResource(if (!mainActivity.isScreenSharing) R.drawable.bckg_icon_selected
         else R
             .drawable.background_icon)
@@ -166,10 +166,10 @@ class ActionBarFragment : Fragment() {
 
     fun setEnabled(enabled: Boolean) {
         if (enabled) {
-            audioButton.setOnClickListener(mButtonClickListener)
-            cameraButton.setOnClickListener(mButtonClickListener)
-            screenSharingButton.setOnClickListener(mButtonClickListener)
-            textChatButton.setOnClickListener(mButtonClickListener)
+            audioButton.setOnClickListener(buttonClickListener)
+            cameraButton.setOnClickListener(buttonClickListener)
+            screenSharingButton.setOnClickListener(buttonClickListener)
+            textChatButton.setOnClickListener(buttonClickListener)
         } else {
             audioButton.setOnClickListener(null)
             cameraButton.setOnClickListener(null)
@@ -199,7 +199,7 @@ class ActionBarFragment : Fragment() {
     }
 
     fun enableAnnotations(enable: Boolean) {
-        annotationsButton.setOnClickListener(if (enable) mButtonClickListener else null)
+        annotationsButton.setOnClickListener(if (enable) buttonClickListener else null)
     }
 
     fun restartScreenSharing() {

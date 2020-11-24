@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
 import android.view.Gravity
@@ -820,7 +819,7 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     }
 
     private fun dpToPx(dp: Int): Int {
-        val screenDensity = this.resources.displayMetrics.density.toDouble()
+        val screenDensity = resources.displayMetrics.density.toDouble()
         return (screenDensity * dp.toDouble()).toInt()
     }
 
@@ -879,8 +878,8 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
         for (i in participantsList.indices) {
             val participant = participantsList[i]
             if (i == 0) {
-                val metrics = DisplayMetrics()
-                windowManager.defaultDisplay.getMetrics(metrics)
+                val metrics = resources.displayMetrics
+//                windowManager.defaultDisplay.getMetrics(metrics)
                 val width = metrics.widthPixels
                 val newSize = participantSize
                 participant.containerSize = Size(width, newSize.height)
@@ -914,10 +913,9 @@ class MainActivity : AppCompatActivity(), PreviewControlCallbacks, AnnotationsLi
     // absolute width in pixels
     private val participantSize: Size
         get() {
-            val metrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(metrics)
-            val width = metrics.widthPixels // absolute width in pixels
-            val height = metrics.heightPixels // absolute height in pixels
+            val metrics = resources.displayMetrics
+            val width = metrics.widthPixels
+            val height = metrics.heightPixels
             if (participantsList.size == 2) {
                 return Size(width, height / 2)
             } else {

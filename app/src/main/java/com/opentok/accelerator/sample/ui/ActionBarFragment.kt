@@ -12,7 +12,6 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.opentok.accelerator.core.utils.MediaType
-import com.opentok.accelerator.core.wrapper.OTWrapper
 import com.opentok.accelerator.sample.MainActivity
 import com.opentok.accelerator.sample.R
 import com.opentok.accelerator.sample.extension.hide
@@ -21,7 +20,6 @@ import com.opentok.accelerator.sample.extension.show
 //
 class ActionBarFragment : Fragment() {
     private lateinit var mainActivity: MainActivity
-    private lateinit var otWrapper: OTWrapper
     private lateinit var audioButton: ImageButton
     private lateinit var cameraButton: ImageButton
     private lateinit var callButton: ImageButton
@@ -60,7 +58,6 @@ class ActionBarFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        otWrapper = mainActivity.otWrapper
         previewControlCallbacks = context
     }
 
@@ -100,18 +97,21 @@ class ActionBarFragment : Fragment() {
     }
 
     private fun updateCameraButton() {
-        val icon = if (otWrapper.isLocalMediaEnabled(MediaType.VIDEO)) R.drawable.video_icon else R.drawable.no_video_icon
+        val icon = if (mainActivity.otWrapper.isLocalMediaEnabled(MediaType.VIDEO)) R.drawable.video_icon else R
+            .drawable
+            .no_video_icon
         cameraButton.setImageResource(icon)
     }
 
     private fun updateMicrophoneButton() {
-        val icon = if (otWrapper.isLocalMediaEnabled(MediaType.AUDIO)) R.drawable.mic_icon else R.drawable.muted_mic_icon
+        val icon = if (mainActivity.otWrapper.isLocalMediaEnabled(MediaType.AUDIO)) R.drawable.mic_icon else R.drawable
+            .muted_mic_icon
         audioButton.setImageResource(icon)
     }
 
 
     private fun localAudioOnClickListener() {
-        if (!otWrapper.isLocalMediaEnabled(MediaType.AUDIO)) {
+        if (!mainActivity.otWrapper.isLocalMediaEnabled(MediaType.AUDIO)) {
             previewControlCallbacks?.onDisableLocalAudio(true)
             audioButton.setImageResource(R.drawable.mic_icon)
         } else {
@@ -121,7 +121,7 @@ class ActionBarFragment : Fragment() {
     }
 
     private fun localVideoOnClickListener() {
-        if (!otWrapper.isLocalMediaEnabled(MediaType.VIDEO)) {
+        if (!mainActivity.otWrapper.isLocalMediaEnabled(MediaType.VIDEO)) {
             previewControlCallbacks?.onDisableLocalVideo(true)
             cameraButton.setImageResource(R.drawable.video_icon)
         } else {

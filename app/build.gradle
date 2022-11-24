@@ -2,20 +2,21 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 32
     defaultConfig {
         applicationId "com.opentok.accelerator.sample"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion 24
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     packagingOptions {
-        exclude 'META-INF/ASL2.0'
+        resources {
+            excludes += ['META-INF/ASL2.0']
+        }
     }
+
 
     buildTypes {
         release {
@@ -32,16 +33,17 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+    namespace 'com.opentok.accelerator.sample'
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
-    implementation 'com.opentok.android:opentok-accelerator-core:2.0.0'
+    implementation 'com.opentok.android:opentok-accelerator-core:2.0.2'
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 }

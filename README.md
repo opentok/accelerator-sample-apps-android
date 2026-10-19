@@ -2,6 +2,8 @@
 
 <img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
+> ⚠️ This repository is deprecated and will no longer receive meaningful updates. For new projects and migrations, we recommend using the [Vonage Video Android reference application](https://github.com/Vonage/vonage-video-android-app).
+
 This project demonstrates Accelerator Sample App - multiparty, web-based audio, video, and messaging solution for Android Platform.
 This project utilizes [accelerator-core-android](https://github.com/opentok/accelerator-core-android).
 
